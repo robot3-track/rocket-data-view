@@ -1,4 +1,4 @@
-import { Activity, Database, LineChart, Radio, Satellite, Settings } from "lucide-react";
+import { Activity, Database, LineChart, Radio, Satellite, Settings, BookOpen } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -12,14 +12,17 @@ import {
 } from "@/components/ui/sidebar";
 
 interface Props {
-  activeTab: "overview" | "ingestion" | "anomalies" | "settings";
+  // FIXED: Expanded runtime string literal definition to include the documentation view token
+  activeTab: "overview" | "ingestion" | "anomalies" | "settings" | "documentation";
   onSelect: (tab: Props["activeTab"]) => void;
 }
 
+// FIXED: Appended the operational manual routing metadata object directly into the map array
 const NAV = [
   { id: "overview", label: "Overview", icon: LineChart },
   { id: "ingestion", label: "NASA API Ingestion", icon: Database },
   { id: "anomalies", label: "Anomalies", icon: Activity },
+  { id: "documentation", label: "Operations Manual", icon: BookOpen },
   { id: "settings", label: "Settings", icon: Settings },
 ] as const;
 
@@ -62,7 +65,7 @@ export function AppSidebar({ activeTab, onSelect }: Props) {
           <SidebarGroupContent>
             <div className="px-2 py-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
               <div className="flex items-center gap-2">
-                <Radio className="h-3.5 w-3.5 text-[color:var(--success)]" />
+                <Radio className="h-3.5 w-3.5 text-[color:var(--success)] animate-pulse" />
                 <span>Telemetry online</span>
               </div>
             </div>
