@@ -1,3 +1,4 @@
+import { AdvancedDataChart } from "./AdvancedDataChart";
 import { useState, useEffect } from "react";
 import { Activity, ShieldAlert, Zap, Orbit, RefreshCw, BarChart2 } from "lucide-react";
 import { fetchSpaceWeatherCorrelation, type TelemetryStream, type CorrelationMetrics } from "@/services/spaceWeatherCorrelation";
@@ -56,6 +57,12 @@ export function CorrelatedView() {
         
         {/* Stream Table Module */}
         <div className="lg:col-span-2 p-6 bg-white rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+          {/* Multi-source Overlay Data Matrix Trend Line */}
+          <div className="pb-2">
+            <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block mb-3">Multi-Axis Correlation Matrix Timeline</span>
+            <AdvancedDataChart streams={streams} />
+          </div>
+          <hr className="border-slate-100 my-4" />
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
               <Activity className="h-4 w-4 text-emerald-500" /> Active Deviation Vectors
