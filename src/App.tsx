@@ -12,7 +12,6 @@ import { DataChart } from "@/components/workspace/DataChart";
 import { IngestionPanel } from "@/components/workspace/IngestionPanel";
 import { DataTable } from "@/components/workspace/DataTable";
 
-// Custom Tabs Primitives from your UI components
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 import {
@@ -71,37 +70,39 @@ export default function App() {
   return (
     <SidebarProvider>
       <Toaster />
-      <div className="flex min-h-screen w-full bg-[#030712] text-slate-100 font-mono selection:bg-sky-500/20">
+      {/* Light, clean slate canvas with natural sans typography */}
+      <div className="flex min-h-screen w-full bg-[#f8fafc] text-slate-900 font-sans antialiased">
         <AppSidebar activeTab={tab} onSelect={setTab} />
         
         <SidebarInset className="flex flex-col bg-transparent">
-          {/* Global Sticky Header */}
-          <header className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-white/10 bg-[#030712]/80 px-6 backdrop-blur transition-all">
-            <SidebarTrigger className="-ml-1 text-slate-400 hover:text-slate-200" />
+          {/* Global Approachable Sticky Header */}
+          <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-slate-200/80 bg-white/80 px-8 backdrop-blur transition-all">
+            <SidebarTrigger className="-ml-1 text-slate-500 hover:text-slate-800 transition-colors" />
             <div className="flex flex-1 items-center justify-between">
               <div>
-                <h1 className="text-sm font-semibold uppercase tracking-wider text-slate-200">
-                  {tab === "ingestion" ? "NASA API Ingestion Workspace" : `${tab} View`}
+                <h1 className="text-base font-semibold tracking-tight text-slate-900 capitalize">
+                  {tab === "ingestion" ? "Data ingestion workspace" : `${tab} view`}
                 </h1>
-                <p className="text-[11px] text-slate-500 font-medium">
+                <p className="text-xs text-slate-500 font-normal mt-0.5">
                   {loading ? (
-                    <span className="flex items-center gap-1.5 text-sky-400 animate-pulse">
-                      <Loader2 className="h-3 w-3 animate-spin" /> Synchronizing telemetry...
+                    <span className="flex items-center gap-1.5 text-sky-600">
+                      <Loader2 className="h-3 w-3 animate-spin" /> Updating live feeds...
                     </span>
                   ) : result ? (
-                    `Last telemetry sync: ${new Date(result.fetchedAt).toLocaleString()}`
+                    `Synchronized on ${new Date(result.fetchedAt).toLocaleTimeString()}`
                   ) : (
-                    "System uninitialized"
+                    "System ready"
                   )}
                 </p>
               </div>
-              <Badge variant={HAS_NASA_KEY ? "outline" : "secondary"} className="font-mono tracking-wide px-2.5 py-0.5 border-white/10 bg-white/5 text-slate-300">
-                {HAS_NASA_KEY ? "● Live API Pipeline" : "○ Demo Token Fallback"}
+              <Badge variant="secondary" className="font-medium tracking-normal px-3 py-1 rounded-full bg-slate-100 text-slate-600 border-none">
+                {HAS_NASA_KEY ? "Live network" : "Demo environment"}
               </Badge>
             </div>
           </header>
 
-          <main className="flex-1 space-y-6 p-6 max-w-[1600px] w-full mx-auto">
+          {/* Core Content Flow */}
+          <main className="flex-1 space-y-6 p-8 max-w-[1400px] w-full mx-auto">
             {!HAS_NASA_KEY && <KeyMissingAlert />}
             {error && <TelemetryFailureAlert message={error} />}
 
@@ -140,7 +141,7 @@ export default function App() {
 }
 
 /* ==========================================================================
-   MODULAR WORKSPACE ROUTING VIEWS
+   MODULAR HUMAN WORKSPACE VIEWS
    ========================================================================== */
 
 interface MetricsPanelProps {
@@ -157,38 +158,38 @@ interface IngestionTabProps extends MetricsPanelProps {
 
 function GlobalMetricsPanel({ result, datasetLabel }: MetricsPanelProps) {
   return (
-    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
       <KpiCard
-        label="Active Anomalies"
-        value={result?.kpis.activeAnomalies ?? "—"}
-        hint="Flagged in current window"
+        label="Active flags"
+        value={result?.kpis.activeAnomalies ?? "0"}
+        hint="Requires technical review"
         icon={AlertTriangle}
         tone="destructive"
-        className="bg-[#0b1329] border-white/5 p-4 rounded-xl"
+        className="bg-white border-slate-200 shadow-sm p-5 rounded-2xl"
       />
       <KpiCard
-        label="Total Sample Points"
+        label="Observed samples"
         value={result ? result.kpis.totalDataPoints.toLocaleString() : "—"}
         hint={datasetLabel}
         icon={Database}
         tone="primary"
-        className="bg-[#0b1329] border-white/5 p-4 rounded-xl"
+        className="bg-white border-slate-200 shadow-sm p-5 rounded-2xl"
       />
       <KpiCard
-        label="System Health"
+        label="Calculated health score"
         value={result ? `${result.kpis.systemHealth}%` : "—"}
-        hint="Composite signal score"
+        hint="Weighted window average"
         icon={HeartPulse}
         tone="success"
-        className="bg-[#0b1329] border-white/5 p-4 rounded-xl"
+        className="bg-white border-slate-200 shadow-sm p-5 rounded-2xl"
       />
       <KpiCard
-        label="Solar Activity Index"
-        value={result?.kpis.solarActivity ?? "—"}
+        label="Solar activity status"
+        value={result?.kpis.solarActivity ?? "Stable"}
         hint="Heliophysics baseline"
         icon={Sun}
         tone="warning"
-        className="bg-[#0b1329] border-white/5 p-4 rounded-xl"
+        className="bg-white border-slate-200 shadow-sm p-5 rounded-2xl"
       />
     </section>
   );
@@ -196,19 +197,19 @@ function GlobalMetricsPanel({ result, datasetLabel }: MetricsPanelProps) {
 
 function OverviewTab({ result, datasetLabel, anomalies, loading }: MetricsPanelProps & { anomalies: DataPoint[], loading: boolean }) {
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6">
       <GlobalMetricsPanel result={result} datasetLabel={datasetLabel} />
       
-      <section className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <Card className="border-white/5 bg-[#0b1329] rounded-xl xl:col-span-2">
-          {/* Tag matches correctly </CardHeader> */}
-          <CardHeader className="pb-2">
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Soft white panel with rounded tracking spaces */}
+        <Card className="border-slate-200/60 bg-white rounded-2xl shadow-sm lg:col-span-2">
+          <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-sm uppercase tracking-wider text-slate-200">Telemetry Matrix — {datasetLabel}</CardTitle>
-                <p className="text-xs text-slate-500">Interactive contextual time-series index</p>
+                <CardTitle className="text-base font-semibold tracking-tight text-slate-900">Activity metric index — {datasetLabel}</CardTitle>
+                <p className="text-xs text-slate-500">Continuous interval data stream visualizer</p>
               </div>
-              <Activity className="h-4 w-4 text-sky-400" />
+              <Activity className="h-4 w-4 text-slate-400" />
             </div>
           </CardHeader>
           <CardContent>
@@ -216,31 +217,31 @@ function OverviewTab({ result, datasetLabel, anomalies, loading }: MetricsPanelP
           </CardContent>
         </Card>
 
-        <Card className="border-white/5 bg-[#0b1329] rounded-xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm uppercase tracking-wider text-slate-200">Critical Anomalies</CardTitle>
-            <p className="text-xs text-slate-500 font-medium">Top active safety flags</p>
+        <Card className="border-slate-200/60 bg-white rounded-2xl shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-base font-semibold tracking-tight text-slate-900">Flagged data anomalies</CardTitle>
+            <p className="text-xs text-slate-500">Outliers exceeding baseline parameters</p>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-2.5">
             {anomalies.slice(0, 5).map((a) => (
               <div
                 key={a.id}
-                className="flex items-center justify-between rounded-lg border border-white/5 bg-[#030712]/60 px-3 py-2 text-xs transition-colors hover:bg-white/5"
+                className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 text-xs transition-colors hover:bg-slate-50"
               >
-                <span className="font-medium truncate pr-4 text-slate-300">{a.label}</span>
-                <Badge variant="destructive" className="shrink-0 font-mono text-[10px] uppercase bg-red-950/40 text-red-400 border-red-900/30">
+                <span className="font-medium truncate pr-4 text-slate-700">{a.label}</span>
+                <Badge variant="outline" className="shrink-0 font-medium rounded-full bg-red-50 text-red-700 border-red-200/40 px-2 py-0.5">
                   {a.category}
                 </Badge>
               </div>
             ))}
             {anomalies.length === 0 && !loading && (
-              <p className="text-xs text-slate-500 py-4 text-center">No structural anomalies detected within dataset scope.</p>
+              <p className="text-xs text-slate-400 py-6 text-center">No major anomalies detected in this scope range.</p>
             )}
           </CardContent>
         </Card>
       </section>
 
-      <section className="border border-white/5 rounded-xl bg-[#0b1329]/40 backdrop-blur">
+      <section className="border border-slate-200/60 rounded-2xl bg-white shadow-sm overflow-hidden">
         <DataTable points={result?.points ?? []} datasetLabel={datasetLabel} />
       </section>
     </div>
@@ -249,9 +250,9 @@ function OverviewTab({ result, datasetLabel, anomalies, loading }: MetricsPanelP
 
 function IngestionTab({ dataset, result, datasetLabel, loading, onDatasetChange, onForceReload }: IngestionTabProps) {
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3 items-start">
-        <div className="md:col-span-1">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 items-start">
+        <div className="lg:col-span-1">
           <IngestionPanel
             dataset={dataset}
             onDatasetChange={onDatasetChange}
@@ -259,11 +260,11 @@ function IngestionTab({ dataset, result, datasetLabel, loading, onDatasetChange,
             loading={loading}
           />
         </div>
-        <div className="md:col-span-2">
+        <div className="lg:col-span-2">
           <GlobalMetricsPanel result={result} datasetLabel={datasetLabel} />
         </div>
       </div>
-      <section className="border border-white/5 rounded-xl bg-[#0b1329]/40 backdrop-blur">
+      <section className="border border-slate-200/60 rounded-2xl bg-white shadow-sm overflow-hidden">
         <DataTable points={result?.points ?? []} datasetLabel={datasetLabel} />
       </section>
     </div>
@@ -272,9 +273,9 @@ function IngestionTab({ dataset, result, datasetLabel, loading, onDatasetChange,
 
 function AnomaliesTab({ result, datasetLabel, anomalies }: MetricsPanelProps & { anomalies: DataPoint[] }) {
   return (
-    <div className="space-y-4 animate-fade-in">
-      <div className="rounded-xl border border-white/5 bg-[#0b1329]/40 backdrop-blur">
-        <DataTable points={anomalies} datasetLabel={`${datasetLabel} (Filtered Anomalies)`} />
+    <div className="space-y-4">
+      <div className="rounded-2xl border border-slate-200/60 bg-white shadow-sm overflow-hidden">
+        <DataTable points={anomalies} datasetLabel={`${datasetLabel} (Filtered items)`} />
       </div>
     </div>
   );
@@ -282,25 +283,25 @@ function AnomaliesTab({ result, datasetLabel, anomalies }: MetricsPanelProps & {
 
 function SettingsTab() {
   return (
-    <Card className="border-white/5 bg-[#0b1329] rounded-xl animate-fade-in">
+    <Card className="border-slate-200/60 bg-white rounded-2xl shadow-sm">
       <CardHeader>
-        <CardTitle className="text-sm uppercase tracking-wider text-slate-200 flex items-center gap-2">
-          <Settings className="h-4 w-4 text-slate-400" /> Environment Management
+        <CardTitle className="text-base font-semibold text-slate-900 flex items-center gap-2">
+          <Settings className="h-4 w-4 text-slate-400" /> API Gateway Settings
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4 text-xs text-slate-300">
-        <div className="flex items-center justify-between border-b pb-3 border-white/5">
+      <CardContent className="space-y-4 text-sm text-slate-600">
+        <div className="flex items-center justify-between border-b pb-4 border-slate-100">
           <div>
-            <span className="font-medium block text-slate-200">NASA Open Data Framework Connection</span>
-            <span className="text-[11px] text-slate-500">Validation token infrastructure route</span>
+            <span className="font-medium block text-slate-800">NASA Open Data Framework pipeline</span>
+            <span className="text-xs text-slate-400">Secure connection gateway key state</span>
           </div>
-          <Badge variant={HAS_NASA_KEY ? "default" : "destructive"} className={HAS_NASA_KEY ? "bg-emerald-950/40 text-emerald-400 border-emerald-900/30" : "bg-red-950/40 text-red-400 border-red-900/30"}>
-            {HAS_NASA_KEY ? "Active Operational Pipeline" : "Token Infrastructure Unset"}
+          <Badge className={HAS_NASA_KEY ? "bg-green-50 text-green-700 border-green-200 px-3 py-1 rounded-full" : "bg-slate-100 text-slate-600 border-slate-200 px-3 py-1 rounded-full"}>
+            {HAS_NASA_KEY ? "Connected" : "Inactive API Key"}
           </Badge>
         </div>
-        <p className="text-slate-400 leading-relaxed text-[11px]">
-          Runtime parameters expect client architecture keys mapped to <code className="rounded bg-[#030712] border border-white/5 px-1.5 py-0.5 font-mono text-[11px] text-sky-400">VITE_NASA_API_KEY</code>. 
-          Modify variables within your active secure environment parameters followed by code pipeline builds to cycle system tunnels cleanly.
+        <p className="text-slate-500 leading-relaxed text-xs">
+          The pipeline queries data safely by evaluating your environment mapping parameters configuration (<code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-800">VITE_NASA_API_KEY</code>). 
+          To change configurations safely without rebuilding, map keys directly inside your cluster deployment dashboard settings interface.
         </p>
       </CardContent>
     </Card>
@@ -309,64 +310,64 @@ function SettingsTab() {
 
 function DocumentationTab() {
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-base font-semibold uppercase tracking-wider text-slate-200 flex items-center gap-2">
-          <BookOpen className="h-4 w-4 text-sky-400" /> Telemetry Glossary & Operations Manual
+        <h2 className="text-base font-semibold tracking-tight text-slate-900 flex items-center gap-2">
+          <BookOpen className="h-4 w-4 text-sky-600" /> Reference manual and computation glossary
         </h2>
-        <p className="text-xs text-slate-500 max-w-3xl">
-          Comprehensive review of mathematical conversions, metric scoring formulas, and ingestion pipelines.
+        <p className="text-xs text-slate-500 max-w-2xl">
+          Documentation covering systemic metric formulas, evaluation indices, and environmental parsing thresholds.
         </p>
       </div>
 
       <Tabs defaultValue="kpis" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-2 mb-4 bg-[#030712] border border-white/5 p-1 rounded-lg">
-          <TabsTrigger value="kpis" className="text-xs uppercase tracking-wider cursor-pointer data-[state=active]:bg-[#0b1329] data-[state=active]:text-sky-400">Core Calculations</TabsTrigger>
-          <TabsTrigger value="datasets" className="text-xs uppercase tracking-wider cursor-pointer data-[state=active]:bg-[#0b1329] data-[state=active]:text-sky-400">Dataset Pipelines</TabsTrigger>
+        <TabsList className="inline-flex items-center bg-slate-100/80 p-1 rounded-xl mb-4">
+          <TabsTrigger value="kpis" className="text-xs font-medium px-4 py-1.5 rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm cursor-pointer transition-all">Core calculations</TabsTrigger>
+          <TabsTrigger value="datasets" className="text-xs font-medium px-4 py-1.5 rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm cursor-pointer transition-all">Dataset reference</TabsTrigger>
         </TabsList>
 
         <TabsContent value="kpis">
-          <Card className="border-white/5 bg-[#0b1329] rounded-xl">
+          <Card className="border-slate-200/60 bg-white rounded-2xl shadow-sm overflow-hidden">
             <CardHeader>
-              <CardTitle className="text-sm uppercase tracking-wider text-slate-200">Performance Parameters</CardTitle>
-              <CardDescription className="text-xs text-slate-500">How calculation kernels map alerts and system scores.</CardDescription>
+              <CardTitle className="text-sm font-semibold text-slate-900">Performance logic kernels</CardTitle>
+              <CardDescription className="text-xs text-slate-400">How metrics interpret system feeds and scores safely.</CardDescription>
             </CardHeader>
             <CardContent>
-              <Table className="border border-white/5">
-                <TableHeader className="bg-[#030712]/50">
-                  <TableRow className="border-b border-white/5">
-                    <TableHead className="w-[180px] text-xs uppercase tracking-wider text-slate-400">Metric Card</TableHead>
-                    <TableHead className="text-xs uppercase tracking-wider text-slate-400">Calculation & Core Logic</TableHead>
-                    <TableHead className="w-[120px] text-xs uppercase tracking-wider text-slate-400">Impact Level</TableHead>
+              <Table className="border border-slate-100 rounded-lg overflow-hidden">
+                <TableHeader className="bg-slate-50">
+                  <TableRow className="border-b border-slate-100">
+                    <TableHead className="w-[180px] text-xs font-semibold text-slate-600">Metric panel</TableHead>
+                    <TableHead className="text-xs font-semibold text-slate-600">Logic parameter description</TableHead>
+                    <TableHead className="w-[120px] text-xs font-semibold text-slate-600">Severity layer</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow className="border-b border-white/5 hover:bg-white/5">
-                    <TableCell className="font-semibold flex items-center gap-1.5 text-slate-300 text-xs">
-                      <ShieldAlert className="h-3.5 w-3.5 text-red-400" /> Active Anomalies
+                  <TableRow className="border-b border-slate-100 hover:bg-slate-50/50">
+                    <TableCell className="font-medium flex items-center gap-1.5 text-slate-800 text-xs">
+                      <ShieldAlert className="h-3.5 w-3.5 text-red-500" /> Active flags
                     </TableCell>
-                    <TableCell className="text-[11px] text-slate-400 leading-relaxed">
-                      Tracks safety hazard flags. In <strong className="text-slate-200 font-normal">NEO Asteroids</strong>, it counts rows where <code className="text-red-400 font-mono text-[11px]">is_potentially_hazardous_asteroid</code> evaluates true.
+                    <TableCell className="text-xs text-slate-500 leading-relaxed">
+                      Tallies active threat indicators. In <span className="text-slate-800">NEO Asteroids</span>, it parses objects flagged dangerous. In space flares, it monitors critical radioactive eruptions.
                     </TableCell>
-                    <TableCell><Badge className="bg-red-950/40 text-red-400 border-red-900/30" variant="destructive">Critical</Badge></TableCell>
+                    <TableCell><Badge className="bg-red-50 text-red-700 border-none rounded-full" variant="destructive">Urgent</Badge></TableCell>
                   </TableRow>
-                  <TableRow className="border-b border-white/5 hover:bg-white/5">
-                    <TableCell className="font-semibold flex items-center gap-1.5 text-slate-300 text-xs">
-                      <HeartPulse className="h-3.5 w-3.5 text-emerald-400" /> System Health
+                  <TableRow className="border-b border-slate-100 hover:bg-slate-50/50">
+                    <TableCell className="font-medium flex items-center gap-1.5 text-slate-800 text-xs">
+                      <HeartPulse className="h-3.5 w-3.5 text-green-500" /> Health index
                     </TableCell>
-                    <TableCell className="text-[11px] text-slate-400 leading-relaxed">
-                      Calculates stability out of 100%. Asteroid hazards deduct 2% each (floor 40%). M-class solar flares deduct 3%, and X-class flares deduct 10% (floor 30%).
+                    <TableCell className="text-xs text-slate-500 leading-relaxed">
+                      Determines general system stability out of 100%. Dangers trigger dynamic micro-deductions continuously down to established safety baselines.
                     </TableCell>
-                    <TableCell><Badge className="bg-slate-900 text-slate-300 border-white/10" variant="outline">Dynamic Risk</Badge></TableCell>
+                    <TableCell><Badge className="bg-slate-100 text-slate-700 border-none rounded-full" variant="outline">Variable</Badge></TableCell>
                   </TableRow>
-                  <TableRow className="border-white/5 hover:bg-white/5">
-                    <TableCell className="font-semibold flex items-center gap-1.5 text-slate-300 text-xs">
-                      <Zap className="h-3.5 w-3.5 text-amber-400" /> Solar Activity
+                  <TableRow className="hover:bg-slate-50/50">
+                    <TableCell className="font-medium flex items-center gap-1.5 text-slate-800 text-xs">
+                      <Zap className="h-3.5 w-3.5 text-amber-500" /> Solar status
                     </TableCell>
-                    <TableCell className="text-[11px] text-slate-400 leading-relaxed">
-                      Space weather classification parsed from DONKI streams. Range scales across <strong>Quiet</strong>, <strong>Moderate</strong>, and <strong>Severe (X-class)</strong>.
+                    <TableCell className="text-xs text-slate-500 leading-relaxed">
+                      Evaluates current stellar wind fields tracked across global baseline indexes ranging seamlessly between Quiet and Severe intervals.
                     </TableCell>
-                    <TableCell><Badge className="bg-amber-950/40 text-amber-400 border-amber-900/30" variant="secondary">Heliophysics</Badge></TableCell>
+                    <TableCell><Badge className="bg-amber-50 text-amber-700 border-none rounded-full" variant="secondary">Observation</Badge></TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -374,63 +375,33 @@ function DocumentationTab() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="datasets" className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card className="border-white/5 bg-[#0b1329] rounded-xl">
+        <TabsContent value="datasets" className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <Card className="border-slate-200/60 bg-white rounded-2xl shadow-sm">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
-                <Database className="h-4 w-4 text-sky-400" /> Near-Earth Objects (NeoWs)
+              <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
+                <Database className="h-3.5 w-3.5 text-sky-600" /> Near-Earth Objects (NeoWs)
               </CardTitle>
             </CardHeader>
-            <CardContent className="text-[11px] text-slate-400 space-y-2">
-              <p>Queries orbital vectors on a rolling 7-day loop window tied to current system time.</p>
-              <ul className="list-disc pl-4 space-y-1 text-[11px]">
-                <li><strong>Value Mapping:</strong> Matches maximum estimated asteroid diameter in whole meters.</li>
-                <li><strong>Data Charting:</strong> Compiles sum of intersecting orbits traversing daily local frames.</li>
+            <CardContent className="text-xs text-slate-500 space-y-2">
+              <p>Monitors rolling asteroid orbital paths crossing daily local space grids.</p>
+              <ul className="list-disc pl-4 space-y-1 text-xs text-slate-400">
+                <li>Logs maximum calculated diameters mapped accurately in raw meters.</li>
+                <li>Calculates intersection density thresholds to predict flight tracks cleanly.</li>
               </ul>
             </CardContent>
           </Card>
 
-          <Card className="border-white/5 bg-[#0b1329] rounded-xl">
+          <Card className="border-slate-200/60 bg-white rounded-2xl shadow-sm">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
-                <Sun className="h-4 w-4 text-amber-400" /> Space Weather (DONKI)
+              <CardTitle className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
+                <Sun className="h-3.5 w-3.5 text-amber-600" /> Space Weather (DONKI)
               </CardTitle>
             </CardHeader>
-            <CardContent className="text-[11px] text-slate-400 space-y-2">
-              <p>Monitors stellar radiation flare activities along a rolling 30-day index cycle path.</p>
-              <ul className="list-disc pl-4 space-y-1 text-[11px]">
-                <li><strong>Value Translation:</strong> Logs logarithmic scales: A (0.1), B (1), C (10), M (100), X (1000).</li>
-                <li><strong>Anomalies:</strong> Flags any core coronal mass explosion tracking higher than C-class bands.</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="border-white/5 bg-[#0b1329] rounded-xl">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
-                <Thermometer className="h-4 w-4 text-sky-400" /> Mars Weather Index
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-[11px] text-slate-400 space-y-2">
-              <p>Ingests atmospheric weather streams relayed straight from the Mars InSight Lander array.</p>
-              <ul className="list-disc pl-4 space-y-1 text-[11px]">
-                <li><strong>Metrics Split:</strong> Maps temperature scales (°C), pressure waves (Pa), and surface wind (m/s).</li>
-                <li><strong>Anomalies:</strong> Flags temperatures dipping lower than -90°C or wind gusts breaking 15 m/s.</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="border-white/5 bg-[#0b1329] rounded-xl">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
-                <HelpCircle className="h-4 w-4 text-emerald-400" /> Astronomy Media Feed (APOD)
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-[11px] text-slate-400 space-y-2">
-              <p>Samples a 10-point node slice array from the Astronomy Picture of the Day infrastructure.</p>
-              <ul className="list-disc pl-4 space-y-1 text-[11px]">
-                <li><strong>Value Mapping:</strong> Evaluates character length sizes inside the contextual paragraphs.</li>
-                <li><strong>Anomalies:</strong> Flags content objects rendering external hypermedia formats instead of simple image frames.</li>
+            <CardContent className="text-xs text-slate-500 space-y-2">
+              <p>Tracks solar magnetic storms and plasma streams across rolling intervals.</p>
+              <ul className="list-disc pl-4 space-y-1 text-xs text-slate-400">
+                <li>Translates geometric flux indicators into friendly status points.</li>
+                <li>Flags high-charge mass ejections reaching planetary fields.</li>
               </ul>
             </CardContent>
           </Card>
@@ -442,12 +413,11 @@ function DocumentationTab() {
 
 function KeyMissingAlert() {
   return (
-    <Alert className="border-amber-500/20 bg-amber-500/5 text-amber-400 rounded-lg animate-fade-in">
-      <AlertTriangle className="h-4 w-4" />
-      <AlertTitle className="text-xs font-semibold uppercase tracking-wider">Active Warning: Shared DEMO_KEY Fallback Mode</AlertTitle>
-      <AlertDescription className="text-[11px] text-slate-400 mt-1">
-        Global application token config <code className="rounded bg-[#030712] border border-white/5 font-mono px-1 py-0.5 text-[11px] text-amber-400">VITE_NASA_API_KEY</code> is unpopulated. 
-        Falling back to standard limits. Please populate environment values inside your active hosting parameters to upgrade stream boundaries.
+    <Alert className="border-amber-200 bg-amber-50 text-amber-900 rounded-xl shadow-sm animate-fade-in">
+      <AlertTriangle className="h-4 w-4 text-amber-600" />
+      <AlertTitle className="text-xs font-semibold tracking-tight">Running in demo presentation mode</AlertTitle>
+      <AlertDescription className="text-xs text-amber-700/90 mt-0.5">
+        The application is presently displaying localized cache snapshots. To route traffic through live systems, attach your secure parameter credential within your server host cluster profile.
       </AlertDescription>
     </Alert>
   );
@@ -455,10 +425,10 @@ function KeyMissingAlert() {
 
 function TelemetryFailureAlert({ message }: { message: string }) {
   return (
-    <Alert variant="destructive" className="bg-red-500/5 border-red-500/20 text-red-400 rounded-lg animate-fade-in">
-      <AlertTriangle className="h-4 w-4" />
-      <AlertTitle className="text-xs font-semibold uppercase tracking-wider">System Fetch Interface Terminated</AlertTitle>
-      <AlertDescription className="text-[11px] text-slate-400 font-mono mt-1">{message}</AlertDescription>
+    <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-900 rounded-xl shadow-sm animate-fade-in">
+      <AlertTriangle className="h-4 w-4 text-red-600" />
+      <AlertTitle className="text-xs font-semibold tracking-tight">Data interface connection issue</AlertTitle>
+      <AlertDescription className="text-xs text-red-700/90 mt-0.5">{message}</AlertDescription>
     </Alert>
   );
 }
