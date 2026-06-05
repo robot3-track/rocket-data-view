@@ -11,6 +11,7 @@ import { KpiCard } from "@/components/workspace/KpiCard";
 import { DataChart } from "@/components/workspace/DataChart";
 import { IngestionPanel } from "@/components/workspace/IngestionPanel";
 import { DataTable } from "@/components/workspace/DataTable";
+import { CorrelatedView } from "@/components/workspace/CorrelatedView";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
@@ -23,7 +24,7 @@ import {
   type DataPoint,
 } from "@/services/nasa";
 
-type Tab = "overview" | "ingestion" | "anomalies" | "settings" | "documentation";
+type Tab = "overview" | "ingestion" | "anomalies" | "settings" | "documentation" | "correlation";
 
 export default function App() {
   const [tab, setTab] = useState<Tab>("overview");
@@ -148,6 +149,8 @@ export default function App() {
             {tab === "settings" && <SettingsTab />}
 
             {tab === "documentation" && <DocumentationTab />}
+
+            {tab === "correlation" && <CorrelatedView />}
           </main>
         </SidebarInset>
       </div>
