@@ -20,16 +20,16 @@ interface Props {
 export function IngestionPanel({ dataset, onDatasetChange, onAnalyze, loading }: Props) {
   const meta = DATASETS.find((d) => d.id === dataset);
   return (
-    <Card className="border-slate-200/80 bg-white rounded-2xl shadow-sm overflow-hidden">
+    <Card className="border-slate-200/80 bg-white rounded-2xl shadow-sm overflow-hidden h-full">
       <CardHeader className="pb-3 pt-6 px-6">
         <CardTitle className="text-base font-semibold tracking-tight text-slate-900">
           NASA data pipeline source
         </CardTitle>
       </CardHeader>
       
-      <CardContent className="flex flex-col gap-4 p-6 pt-0 sm:flex-row sm:items-end">
-        <div className="flex-1 space-y-2">
-          {/* Swapped aggressive uppercase for approachable sentence case label layout */}
+      {/* Changed container to a stacked flex layout to allow text descriptions and controls to breathe naturally */}
+      <CardContent className="flex flex-col justify-between p-6 pt-0 gap-5 h-[calc(100%-60px)]">
+        <div className="space-y-3">
           <label className="text-xs font-medium text-slate-500 block">
             Select target dataset
           </label>
@@ -45,19 +45,19 @@ export function IngestionPanel({ dataset, onDatasetChange, onAnalyze, loading }:
               ))}
             </SelectContent>
           </Select>
-          {meta && <p className="text-xs leading-relaxed text-slate-400 mt-1">{meta.description}</p>}
+          {meta && <p className="text-xs leading-relaxed text-slate-400 mt-1.5">{meta.description}</p>}
         </div>
 
-        {/* Re-styled action button to look like a clean, premium enterprise trigger instead of a system shell input */}
+        {/* Removed horizontal squeezing constraints; the action button now spans full-width at the bottom of the card block safely */}
         <Button 
           onClick={onAnalyze} 
           disabled={loading} 
-          className="h-10 px-5 rounded-xl bg-slate-900 text-white font-medium text-sm hover:bg-slate-800 transition-all shadow-sm active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none shrink-0 inline-flex items-center justify-center cursor-pointer"
+          className="w-full h-11 rounded-xl bg-slate-900 text-white font-medium text-sm hover:bg-slate-800 transition-all shadow-sm active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center cursor-pointer mt-auto"
         >
           {loading ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin text-slate-400" />
           ) : (
-            <Play className="mr-2 h-3.5 w-3.5 fill-current" />
+            <Play className="mr-2 h-3.5 w-3.5 fill-current text-white/90" />
           )}
           {loading ? "Analyzing streams..." : "Process dataset"}
         </Button>
