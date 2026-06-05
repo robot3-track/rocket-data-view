@@ -56,12 +56,15 @@ async function getJSON(url: string) {
 async function fetchNEO(): Promise<AnalysisResult> {
   const end = new Date();
   const start = new Date(end.getTime() - 6 * 86400000);
-  // FIXED: Restored complete api.nasa.gov NeoWs feed routing configuration
-  const url = `https://nasa.gov{ymd(start)}&end_date=${ymd(end)}&api_key=${KEY}`;
+  
+  // FIXED: Corrected complete routing configuration and string interpolation
+  const url = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${ymd(start)}&end_date=${ymd(end)}&api_key=${KEY}`;
+  
   const json = await getJSON(url);
   const byDate = json.near_earth_objects as Record<string, any[]>;
   const points: DataPoint[] = [];
   const series: { date: string; value: number }[] = [];
+  
   for (const date of Object.keys(byDate).sort()) {
     const list = byDate[date];
     series.push({ date, value: list.length });
@@ -93,8 +96,9 @@ async function fetchNEO(): Promise<AnalysisResult> {
 }
 
 async function fetchAPOD(): Promise<AnalysisResult> {
-  // FIXED: Restored valid APOD service query string paths
-  const url = `https://nasa.gov{KEY}`;
+  // FIXED: Restored valid APOD service query path configuration (fetching 10 items for a good dashboard feed)
+  const url = `https://api.nasa.gov/planetary/apod?api_key=${KEY}&count=10`;
+  
   const arr = (await getJSON(url)) as any[];
   const sorted = [...arr].sort((a, b) => a.date.localeCompare(b.date));
   const points: DataPoint[] = sorted.map((a, i) => ({
@@ -123,8 +127,10 @@ async function fetchAPOD(): Promise<AnalysisResult> {
 async function fetchDONKI(): Promise<AnalysisResult> {
   const end = new Date();
   const start = new Date(end.getTime() - 29 * 86400000);
-  // FIXED: Corrected Space Weather DONKI API endpoint path layout
-  const url = `https://nasa.gov{ymd(start)}&endDate=${ymd(end)}&api_key=${KEY}`;
+  
+  // FIXED: Space Weather DONKI API endpoint layout updated
+  const url = `https://api.nasa.gov/DONKI/FLR?startDate=${ymd(start)}&endDate=${ymd(end)}&api_key=${KEY}`;
+  
   const arr = (await getJSON(url)) as any[];
   const points: DataPoint[] = arr.map((f, i) => ({
     id: f.flrID ?? String(i),
@@ -162,8 +168,9 @@ function classToValue(c?: string): number {
 }
 
 async function fetchMars(): Promise<AnalysisResult> {
-  // FIXED: Restored complete Mars InSight framework fetch URLs
-  const url = `https://nasa.gov{KEY}&feedtype=json&ver=1.0`;
+  // FIXED: Complete Mars InSight framework fetch URLs
+  const url = `https://api.nasa.gov/insight_weather/?api_key=${KEY}&feedtype=json&ver=1.0`;
+  
   try {
     const json = await getJSON(url);
     const sols: string[] = json.sol_keys ?? [];
@@ -255,7 +262,6 @@ export async function fetchDataset(id: DatasetId): Promise<AnalysisResult> {
   }
 }
 
-// FIXED: Completed the closure signature of your custom toCSV generator array function cleanly
 export function toCSV(points: DataPoint[]): string {
   const header = ["id", "label", "value", "category", "timestamp", "anomaly"];
   const rows = points.map((p) =>
