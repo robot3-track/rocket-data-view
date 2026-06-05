@@ -56,7 +56,7 @@ async function getJSON(url: string) {
 async function fetchNEO(): Promise<AnalysisResult> {
   const end = new Date();
   const start = new Date(end.getTime() - 6 * 86400000);
-  const url = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${ymd(start)}&end_date=${ymd(end)}&api_key=${KEY}`;
+  const url = `https://nasa.gov{ymd(start)}&end_date=${ymd(end)}&api_key=${KEY}`;
   const json = await getJSON(url);
   const byDate = json.near_earth_objects as Record<string, any[]>;
   const points: DataPoint[] = [];
@@ -92,7 +92,7 @@ async function fetchNEO(): Promise<AnalysisResult> {
 }
 
 async function fetchAPOD(): Promise<AnalysisResult> {
-  const url = `https://api.nasa.gov/planetary/apod?count=14&api_key=${KEY}`;
+  const url = `https://nasa.gov{KEY}`;
   const arr = (await getJSON(url)) as any[];
   const sorted = [...arr].sort((a, b) => a.date.localeCompare(b.date));
   const points: DataPoint[] = sorted.map((a, i) => ({
@@ -121,7 +121,7 @@ async function fetchAPOD(): Promise<AnalysisResult> {
 async function fetchDONKI(): Promise<AnalysisResult> {
   const end = new Date();
   const start = new Date(end.getTime() - 29 * 86400000);
-  const url = `https://api.nasa.gov/DONKI/FLR?startDate=${ymd(start)}&endDate=${ymd(end)}&api_key=${KEY}`;
+  const url = `https://nasa.gov{ymd(start)}&endDate=${ymd(end)}&api_key=${KEY}`;
   const arr = (await getJSON(url)) as any[];
   const points: DataPoint[] = arr.map((f, i) => ({
     id: f.flrID ?? String(i),
@@ -159,12 +159,12 @@ function classToValue(c?: string): number {
 }
 
 async function fetchMars(): Promise<AnalysisResult> {
-  const url = `https://api.nasa.gov/insight_weather/?api_key=${KEY}&feedtype=json&ver=1.0`;
+  const url = `https://nasa.gov{KEY}&feedtype=json&ver=1.0`;
   try {
     const json = await getJSON(url);
     const sols: string[] = json.sol_keys ?? [];
     
-    // Safety check: Avoid breaking UI downstream if NASA maps empty space arrays
+    // Graceful fallback for the retired Mars InSight dataset to protect workspace execution
     if (sols.length === 0) {
       return getEmptyMarsFallback();
     }
@@ -220,12 +220,10 @@ async function fetchMars(): Promise<AnalysisResult> {
       },
     };
   } catch (err) {
-    // If NASA completely rejects the connection, fall back gracefully
     return getEmptyMarsFallback();
   }
 }
 
-// Generates a graceful, non-breaking placeholder state for retired Mars API feeds
 function getEmptyMarsFallback(): AnalysisResult {
   return {
     dataset: "mars-weather",
@@ -254,6 +252,7 @@ export async function fetchDataset(id: DatasetId): Promise<AnalysisResult> {
   }
 }
 
+// Formats your array directly for consumption by the DataTable component
 export function toCSV(points: DataPoint[]): string {
   const header = ["id", "label", "value", "category", "timestamp", "anomaly"];
   const rows = points.map((p) =>
