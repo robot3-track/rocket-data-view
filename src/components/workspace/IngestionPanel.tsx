@@ -20,32 +20,46 @@ interface Props {
 export function IngestionPanel({ dataset, onDatasetChange, onAnalyze, loading }: Props) {
   const meta = DATASETS.find((d) => d.id === dataset);
   return (
-    <Card className="border-border/60 bg-card/80">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">NASA API Ingestion</CardTitle>
+    <Card className="border-slate-200/80 bg-white rounded-2xl shadow-sm overflow-hidden">
+      <CardHeader className="pb-3 pt-6 px-6">
+        <CardTitle className="text-base font-semibold tracking-tight text-slate-900">
+          NASA data pipeline source
+        </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="flex-1 space-y-1.5">
-          <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Dataset
+      
+      <CardContent className="flex flex-col gap-4 p-6 pt-0 sm:flex-row sm:items-end">
+        <div className="flex-1 space-y-2">
+          {/* Swapped aggressive uppercase for approachable sentence case label layout */}
+          <label className="text-xs font-medium text-slate-500 block">
+            Select target dataset
           </label>
           <Select value={dataset} onValueChange={(v) => onDatasetChange(v as DatasetId)}>
-            <SelectTrigger>
+            <SelectTrigger className="w-full bg-slate-50/50 border-slate-200 text-slate-800 rounded-xl h-10 px-3 hover:bg-slate-50 transition-colors cursor-pointer focus:ring-1 focus:ring-sky-500/20">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white border-slate-200/80 rounded-xl shadow-lg">
               {DATASETS.map((d) => (
-                <SelectItem key={d.id} value={d.id}>
+                <SelectItem key={d.id} value={d.id} className="text-sm text-slate-700 focus:bg-slate-50 focus:text-slate-900 rounded-lg py-2 cursor-pointer">
                   {d.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          {meta && <p className="text-xs text-muted-foreground">{meta.description}</p>}
+          {meta && <p className="text-xs leading-relaxed text-slate-400 mt-1">{meta.description}</p>}
         </div>
-        <Button onClick={onAnalyze} disabled={loading} className="sm:w-auto">
-          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Play className="mr-2 h-4 w-4" />}
-          {loading ? "Analyzing…" : "Analyze Data"}
+
+        {/* Re-styled action button to look like a clean, premium enterprise trigger instead of a system shell input */}
+        <Button 
+          onClick={onAnalyze} 
+          disabled={loading} 
+          className="h-10 px-5 rounded-xl bg-slate-900 text-white font-medium text-sm hover:bg-slate-800 transition-all shadow-sm active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none shrink-0 inline-flex items-center justify-center cursor-pointer"
+        >
+          {loading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin text-slate-400" />
+          ) : (
+            <Play className="mr-2 h-3.5 w-3.5 fill-current" />
+          )}
+          {loading ? "Analyzing streams..." : "Process dataset"}
         </Button>
       </CardContent>
     </Card>
