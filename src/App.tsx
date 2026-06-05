@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Activity, AlertTriangle, Database, HeartPulse, Sun } from "lucide-react";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Toaster } from "@/components/ui/sonner";
 import { AppSidebar } from "@/components/workspace/AppSidebar";
 import { KpiCard } from "@/components/workspace/KpiCard";
 import { DataChart } from "@/components/workspace/DataChart";
@@ -18,23 +18,9 @@ import {
   type DatasetId,
 } from "@/services/nasa";
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "NASA Data Analytics Workspace" },
-      {
-        name: "description",
-        content:
-          "Production-grade analytics workspace for NASA open data — KPIs, charts, ingestion, and CSV export.",
-      },
-    ],
-  }),
-  component: WorkspacePage,
-});
-
 type Tab = "overview" | "ingestion" | "anomalies" | "settings";
 
-function WorkspacePage() {
+export default function App() {
   const [tab, setTab] = useState<Tab>("overview");
   const [dataset, setDataset] = useState<DatasetId>("neo");
   const [result, setResult] = useState<AnalysisResult | null>(null);
@@ -68,6 +54,7 @@ function WorkspacePage() {
 
   return (
     <SidebarProvider>
+      <Toaster />
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar activeTab={tab} onSelect={setTab} />
         <SidebarInset>
