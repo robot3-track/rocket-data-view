@@ -48,6 +48,7 @@ function WorkspacePage() {
       const r = await fetchDataset(id);
       setResult(r);
     } catch (e) {
+      setResult(null);
       setError(e instanceof Error ? e.message : "Failed to fetch NASA data.");
     } finally {
       setLoading(false);
