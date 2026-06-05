@@ -1,53 +1,56 @@
-import type { LucideIcon } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { ReactNode, ComponentType } from "react";
 
-interface Props {
+interface KpiCardProps {
   label: string;
   value: string | number;
   hint?: string;
-  icon: LucideIcon;
-  tone?: "primary" | "success" | "warning" | "destructive";
+  icon?: ComponentType<{ className?: string }>;
+  tone?: "primary" | "success" | "destructive" | "warning";
+  className?: string; // Clear TypeScript property restriction errors
 }
 
-// Re-mapped to clean, soft background colors for the right panel accents
-const toneClass: Record<NonNullable<Props["tone"]>, string> = {
-  primary: "text-sky-600 bg-sky-50",
-  success: "text-emerald-600 bg-emerald-50",
-  warning: "text-amber-600 bg-amber-50",
-  destructive: "text-red-600 bg-red-50",
-};
+export function KpiCard({
+  label,
+  value,
+  hint,
+  icon: Icon,
+  tone = "primary",
+  className = ""
+}: KpiCardProps) {
+  // Map tones to clean, professional background color accents for your icons
+  const toneStyles = {
+    primary: "bg-sky-50 text-sky-600 dark:bg-sky-950/40 dark:text-sky-400",
+    success: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400",
+    destructive: "bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-400",
+    warning: "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400"
+  };
 
-export function KpiCard({ label, value, hint, icon: Icon, tone = "primary" }: Props) {
   return (
-    <Card className="border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-all rounded-2xl overflow-hidden">
-      <CardContent className="flex flex-col justify-between p-6 min-h-[140px]">
-        <div className="flex items-start justify-between gap-4 w-full">
-          <div className="min-w-0 space-y-1.5">
-            {/* Swapped uppercase tracking-wider with approachable sentence case */}
-            <p className="text-xs font-medium text-slate-500 capitalize">
-              {label}
-            </p>
-            <p className="truncate text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
-              {value}
-            </p>
-          </div>
-          
-          {/* Softer, fully rounded panel badge structures */}
-          <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors", toneClass[tone])}>
-            <Icon className="h-5 w-5" />
-          </div>
+    <div 
+      className={`flex flex-col justify-between relative overflow-hidden ${className}`}
+    >
+      <div className="flex items-start justify-between w-full gap-2">
+        <div className="space-y-1 min-w-0">
+          <span className="text-[11px] font-medium tracking-tight text-slate-400 uppercase block truncate">
+            {label}
+          </span>
+          <span className="text-xl font-bold tracking-tight text-slate-900 block truncate">
+            {value}
+          </span>
         </div>
 
-        {/* Clean separation rule line breaking out the lower telemetry indicators */}
-        {hint && (
-          <div className="mt-4 pt-3 border-t border-slate-100 w-full">
-            <p className="text-[11px] font-normal text-slate-400 truncate">
-              {hint}
-            </p>
+        {Icon && (
+          <div className={`p-2.5 rounded-xl shrink-0 ${toneStyles[tone]}`}>
+            <Icon className="h-4 w-4" />
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+
+      {hint && (
+        <p className="text-[11px] text-slate-400 mt-3 border-t border-slate-100 pt-2 truncate w-full">
+          {hint}
+        </p>
+      )}
+    </div>
   );
 }
