@@ -134,7 +134,7 @@ export default function App() {
 }
 
 /* ==========================================================================
-   SUPPORTING CHILD SUB-VIEWS (DECLARED SO WORKSPACE RENDERS SEAMLESSLY)
+   SUPPORTING CHILD SUB-VIEWS
    ========================================================================== */
 
 interface MetricsPanelProps {
@@ -166,6 +166,7 @@ function OverviewTab({ result, datasetLabel, anomalies, loading }: MetricsPanelP
       <GlobalMetricsPanel result={result} datasetLabel={datasetLabel} />
       <section className="grid grid-cols-1 gap-4 xl:grid-cols-3">
         <Card className="border-border/40 bg-card/40 xl:col-span-2">
+          {/* TAG REPAIR: Matches opening CardHeader to closing CardHeader below seamlessly */}
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
@@ -247,7 +248,7 @@ function SettingsTab() {
 
 /* ==========================================================================
    DOCUMENTATION TAB (THE OPERATIONS MANUAL COMPONENT)
-   ========================================================================== */
+   ========================================================================= */
 
 function DocumentationTab() {
   return (
