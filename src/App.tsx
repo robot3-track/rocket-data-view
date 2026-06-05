@@ -1,15 +1,20 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { Activity, AlertTriangle, Database, HeartPulse, Sun, Loader2 } from "lucide-react";
+import { Activity, AlertTriangle, Database, HeartPulse, Sun, Loader2, BookOpen, HelpCircle, ShieldAlert, Zap, Thermometer, Settings } from "lucide-react";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Toaster } from "@/components/ui/sonner";
 import { AppSidebar } from "@/components/workspace/AppSidebar";
 import { KpiCard } from "@/components/workspace/KpiCard";
 import { DataChart } from "@/components/workspace/DataChart";
 import { IngestionPanel } from "@/components/workspace/IngestionPanel";
 import { DataTable } from "@/components/workspace/DataTable";
+
+// Custom Tabs Primitives from your UI components
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
 import {
   DATASETS,
   HAS_NASA_KEY,
@@ -19,7 +24,7 @@ import {
   type DataPoint,
 } from "@/services/nasa";
 
-type Tab = "overview" | "ingestion" | "anomalies" | "settings";
+type Tab = "overview" | "ingestion" | "anomalies" | "settings" | "documentation";
 
 export default function App() {
   const [tab, setTab] = useState<Tab>("overview");
@@ -28,18 +33,15 @@ export default function App() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Memoized label lookup for runtime performance
   const datasetLabel = useMemo(() => {
     const targetId = result?.dataset ?? dataset;
     return DATASETS.find((d) => d.id === targetId)?.label ?? "Dataset";
   }, [result?.dataset, dataset]);
 
-  // Clean data-filtering slice
   const anomalies = useMemo(() => {
     return result?.points.filter((p) => p.anomaly) ?? [];
   }, [result?.points]);
 
-  // Main execution payload wrapped to prevent callback reference thrashing
   const runAnalysis = useCallback(async (id: DatasetId, abortSignal?: { active: boolean }) => {
     setLoading(true);
     setError(null);
@@ -58,13 +60,10 @@ export default function App() {
     }
   }, []);
 
-  // Handles safe framework lifecycle updates with proper cleanup hooks
   useEffect(() => {
     const context = { active: true };
     runAnalysis(dataset, context);
-    return () => {
-      context.active = false;
-    };
+    return () => { context.active = false; };
   }, [dataset, runAnalysis]);
 
   return (
@@ -74,8 +73,8 @@ export default function App() {
         <AppSidebar activeTab={tab} onSelect={setTab} />
         
         <SidebarInset className="flex flex-col">
-          {/* Global Header Bar */}
-          <header className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-border bg-background/80 px-6 backdrop-blur transition-all">
+          {/* Sticky Header */}
+          <header className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-border bg-background/80 px-6 backdrop-blur">
             <SidebarTrigger className="-ml-1" />
             <div className="flex flex-1 items-center justify-between">
               <div>
@@ -100,30 +99,23 @@ export default function App() {
             </div>
           </header>
 
-          {/* Main Context Portal */}
-          <main className="flex-1 space-y-6 p-6 max-w-[1600px] w-full mx-auto transition-opacity duration-200">
-            {/* System Status Notifications */}
+          {/* Main Container Views */}
+          <main className="flex-1 space-y-6 p-6 max-w-[1600px] w-full mx-auto">
             {!HAS_NASA_KEY && <KeyMissingAlert />}
             {error && <TelemetryFailureAlert message={error} />}
 
-            {/* Dashboard Workspace Views */}
             {tab === "overview" && (
-              <OverviewTab 
-                result={result} 
-                datasetLabel={datasetLabel} 
-                anomalies={anomalies} 
-                loading={loading} 
-              />
+              <OverviewTab result={result} datasetLabel={datasetLabel} anomalies={anomalies} loading={loading} />
             )}
 
             {tab === "ingestion" && (
               <IngestionTab 
-                dataset={dataset}
-                result={result}
-                datasetLabel={datasetLabel}
-                loading={loading}
-                onDatasetChange={setDataset}
-                onForceReload={() => runAnalysis(dataset)}
+                dataset={dataset} 
+                result={result} 
+                datasetLabel={datasetLabel} 
+                loading={loading} 
+                onDatasetChange={setDataset} 
+                onForceReload={() => runAnalysis(dataset)} 
               />
             )}
 
@@ -132,6 +124,8 @@ export default function App() {
             )}
 
             {tab === "settings" && <SettingsTab />}
+
+            {tab === "documentation" && <DocumentationTab />}
           </main>
         </SidebarInset>
       </div>
@@ -140,7 +134,7 @@ export default function App() {
 }
 
 /* ==========================================================================
-   MODULAR SUB-COMPONENTS & SUB-VIEWS (CLEAN ARTIFACT SEPARATION)
+   SUPPORTING CHILD SUB-VIEWS (DECLARED SO WORKSPACE RENDERS SEAMLESSLY)
    ========================================================================== */
 
 interface MetricsPanelProps {
@@ -148,49 +142,30 @@ interface MetricsPanelProps {
   datasetLabel: string;
 }
 
+interface IngestionTabProps extends MetricsPanelProps {
+  dataset: DatasetId;
+  loading: boolean;
+  onDatasetChange: (v: DatasetId) => void;
+  onForceReload: () => void;
+}
+
 function GlobalMetricsPanel({ result, datasetLabel }: MetricsPanelProps) {
   return (
     <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <KpiCard
-        label="Active Anomalies"
-        value={result?.kpis.activeAnomalies ?? "—"}
-        hint="Flagged in current window"
-        icon={AlertTriangle}
-        tone="destructive"
-      />
-      <KpiCard
-        label="Total Sample Points"
-        value={result ? result.kpis.totalDataPoints.toLocaleString() : "—"}
-        hint={datasetLabel}
-        icon={Database}
-        tone="primary"
-      />
-      <KpiCard
-        label="System Health"
-        value={result ? `${result.kpis.systemHealth}%` : "—"}
-        hint="Composite signal score"
-        icon={HeartPulse}
-        tone="success"
-      />
-      <KpiCard
-        label="Solar Activity Index"
-        value={result?.kpis.solarActivity ?? "—"}
-        hint="Heliophysics baseline"
-        icon={Sun}
-        tone="warning"
-      />
+      <KpiCard label="Active Anomalies" value={result?.kpis.activeAnomalies ?? "—"} hint="Flagged in current window" icon={AlertTriangle} tone="destructive" />
+      <KpiCard label="Total Sample Points" value={result ? result.kpis.totalDataPoints.toLocaleString() : "—"} hint={datasetLabel} icon={Database} tone="primary" />
+      <KpiCard label="System Health" value={result ? `${result.kpis.systemHealth}%` : "—"} hint="Composite signal score" icon={HeartPulse} tone="success" />
+      <KpiCard label="Solar Activity Index" value={result?.kpis.solarActivity ?? "—"} hint="Heliophysics baseline" icon={Sun} tone="warning" />
     </section>
   );
 }
 
-// 1. Overview Tab Layout
 function OverviewTab({ result, datasetLabel, anomalies, loading }: MetricsPanelProps & { anomalies: DataPoint[], loading: boolean }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <GlobalMetricsPanel result={result} datasetLabel={datasetLabel} />
-      
       <section className="grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <Card className="border-border/40 bg-card/40 backdrop-blur xl:col-span-2">
+        <Card className="border-border/40 bg-card/40 xl:col-span-2">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
@@ -200,26 +175,19 @@ function OverviewTab({ result, datasetLabel, anomalies, loading }: MetricsPanelP
               <Activity className="h-4 w-4 text-muted-foreground" />
             </div>
           </CardHeader>
-          <CardContent>
-            <DataChart data={result?.series ?? []} />
-          </CardContent>
+          <CardContent><DataChart data={result?.series ?? []} /></CardContent>
         </Card>
 
-        <Card className="border-border/40 bg-card/40 backdrop-blur">
+        <Card className="border-border/40 bg-card/40">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold tracking-tight">Critical Anomalies</CardTitle>
             <p className="text-xs text-muted-foreground font-medium">Top active safety flags</p>
           </CardHeader>
           <CardContent className="space-y-2">
             {anomalies.slice(0, 5).map((a) => (
-              <div
-                key={a.id}
-                className="flex items-center justify-between rounded-lg border border-border/40 bg-background/50 px-3 py-2 text-xs transition-colors hover:bg-background/80"
-              >
+              <div key={a.id} className="flex items-center justify-between rounded-lg border border-border/40 bg-background/50 px-3 py-2 text-xs">
                 <span className="font-medium truncate pr-4">{a.label}</span>
-                <Badge variant="destructive" className="shrink-0 font-mono text-[10px] uppercase">
-                  {a.category}
-                </Badge>
+                <Badge variant="destructive" className="shrink-0 font-mono text-[10px] uppercase">{a.category}</Badge>
               </div>
             ))}
             {anomalies.length === 0 && !loading && (
@@ -228,91 +196,156 @@ function OverviewTab({ result, datasetLabel, anomalies, loading }: MetricsPanelP
           </CardContent>
         </Card>
       </section>
-
-      <section className="border rounded-xl bg-card/20 backdrop-blur">
-        <DataTable points={result?.points ?? []} datasetLabel={datasetLabel} />
-      </section>
+      <section className="border rounded-xl bg-card/20"><DataTable points={result?.points ?? []} datasetLabel={datasetLabel} /></section>
     </div>
   );
 }
 
-// 2. Ingestion Operations Tab Layout
-interface IngestionTabProps extends MetricsPanelProps {
-  dataset: DatasetId;
-  loading: boolean;
-  onDatasetChange: (v: DatasetId) => void;
-  onForceReload: () => void;
-}
-
 function IngestionTab({ dataset, result, datasetLabel, loading, onDatasetChange, onForceReload }: IngestionTabProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3 items-start">
         <div className="md:col-span-1">
-          <IngestionPanel
-            dataset={dataset}
-            onDatasetChange={onDatasetChange}
-            onAnalyze={onForceReload}
-            loading={loading}
-          />
+          <IngestionPanel dataset={dataset} onDatasetChange={onDatasetChange} onAnalyze={onForceReload} loading={loading} />
         </div>
         <div className="md:col-span-2">
           <GlobalMetricsPanel result={result} datasetLabel={datasetLabel} />
         </div>
       </div>
-      <section className="border rounded-xl bg-card/20 backdrop-blur">
-        <DataTable points={result?.points ?? []} datasetLabel={datasetLabel} />
-      </section>
+      <section className="border rounded-xl bg-card/20"><DataTable points={result?.points ?? []} datasetLabel={datasetLabel} /></section>
     </div>
   );
 }
 
-// 3. Isolated Anomalies Analysis Tab Layout
 function AnomaliesTab({ result, datasetLabel, anomalies }: MetricsPanelProps & { anomalies: DataPoint[] }) {
   return (
-    <div className="space-y-4">
-      <div className="rounded-xl border bg-card/20 backdrop-blur">
-        <DataTable points={anomalies} datasetLabel={`${datasetLabel} (Filtered Anomalies)`} />
-      </div>
+    <div className="space-y-4 animate-fade-in">
+      <div className="rounded-xl border bg-card/20"><DataTable points={anomalies} datasetLabel={`${datasetLabel} (Filtered Anomalies)`} /></div>
     </div>
   );
 }
 
-// 4. Infrastructure/Config Settings View Layout
 function SettingsTab() {
   return (
-    <Card className="border-border/50 bg-card/40 backdrop-blur">
-      <CardHeader>
-        <CardTitle className="text-base font-semibold">System Configuration Matrix</CardTitle>
-      </CardHeader>
+    <Card className="border-border/50 bg-card/40 animate-fade-in">
+      <CardHeader><CardTitle className="text-base font-semibold flex items-center gap-2"><Settings className="h-4 w-4 text-muted-foreground" /> Environment Management</CardTitle></CardHeader>
       <CardContent className="space-y-4 text-sm">
         <div className="flex items-center justify-between border-b pb-3 border-border/40">
           <div>
             <span className="font-medium block">NASA Open Data Framework Connection</span>
             <span className="text-xs text-muted-foreground">Validation token infrastructure route</span>
           </div>
-          <Badge variant={HAS_NASA_KEY ? "default" : "destructive"}>
-            {HAS_NASA_KEY ? "Active Operational Pipeline" : "Token Infrastructure Unset"}
-          </Badge>
+          <Badge variant={HAS_NASA_KEY ? "default" : "destructive"}>{HAS_NASA_KEY ? "Active Operational Pipeline" : "Token Infrastructure Unset"}</Badge>
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Runtime parameters expect client architecture keys mapped to <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">VITE_NASA_API_KEY</code>. 
-          Modify variables within your active secure environment parameters (such as your Vercel Project Dashboards) followed by code pipeline builds to cycle system tunnels cleanly.
+          Runtime parameters expect client architecture keys mapped to <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">VITE_NASA_API_KEY</code>.
         </p>
       </CardContent>
     </Card>
   );
 }
 
-/* Static Alerts */
+/* ==========================================================================
+   DOCUMENTATION TAB (THE OPERATIONS MANUAL COMPONENT)
+   ========================================================================== */
+
+function DocumentationTab() {
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <div className="space-y-1">
+        <h2 className="text-xl font-semibold tracking-tight flex items-center gap-2">
+          <BookOpen className="h-5 w-5 text-primary" /> Telemetry Glossary & Operations Manual
+        </h2>
+        <p className="text-sm text-muted-foreground max-w-3xl">
+          Comprehensive review of mathematical conversions, metric scoring formulas, and ingestion pipelines.
+        </p>
+      </div>
+
+      <Tabs defaultValue="kpis" className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2 mb-4">
+          <TabsTrigger value="kpis">Core Calculations & KPIs</TabsTrigger>
+          <TabsTrigger value="datasets">Dataset Pipelines</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="kpis">
+          <Card className="border-border/40 bg-card/40 backdrop-blur">
+            <CardHeader>
+              <CardTitle className="text-base font-semibold">Performance Parameters</CardTitle>
+              <CardDescription>How calculation kernels map alerts and system scores.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[180px]">Metric Card</TableHead>
+                    <TableHead>Calculation & Core Logic</TableHead>
+                    <TableHead className="w-[120px]">Impact Level</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-semibold flex items-center gap-1.5">
+                      <ShieldAlert className="h-3.5 w-3.5 text-destructive" /> Active Anomalies
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground leading-relaxed">
+                      Tracks safety hazard flags. In <strong>NEO Asteroids</strong>, it counts rows where <code className="text-destructive font-mono text-[11px]">is_potentially_hazardous_asteroid</code> evaluates true.
+                    </TableCell>
+                    <TableCell><Badge variant="destructive">Critical</Badge></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold flex items-center gap-1.5">
+                      <HeartPulse className="h-3.5 w-3.5 text-success" /> System Health
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground leading-relaxed">
+                      Calculates stability out of 100%. Asteroid hazards deduct 2% each (floor 40%). M-class solar flares deduct 3%, and X-class flares deduct 10% (floor 30%).
+                    </TableCell>
+                    <TableCell><Badge variant="outline">Dynamic Risk</Badge></TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold flex items-center gap-1.5">
+                      <Zap className="h-3.5 w-3.5 text-warning" /> Solar Activity
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground leading-relaxed">
+                      Space weather classification parsed from DONKI streams. Range scales across <strong>Quiet</strong>, <strong>Moderate</strong>, and <strong>Severe (X-class)</strong>.
+                    </TableCell>
+                    <TableCell><Badge variant="secondary">Heliophysics</Badge></TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="datasets" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="border-border/40 bg-card/40">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-semibold flex items-center gap-1.5"><Database className="h-4 w-4 text-primary" /> Near-Earth Objects (NeoWs)</CardTitle>
+            </CardHeader>
+            <CardContent className="text-xs text-muted-foreground space-y-2">
+              <p>Queries orbital vectors on a rolling 7-day loop window tied to current system time.</p>
+            </CardContent>
+          </Card>
+          <Card className="border-border/40 bg-card/40">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-semibold flex items-center gap-1.5"><Sun className="h-4 w-4 text-warning" /> Space Weather (DONKI)</CardTitle>
+            </CardHeader>
+            <CardContent className="text-xs text-muted-foreground space-y-2">
+              <p>Monitors stellar radiation flare activities along a rolling 30-day index cycle path.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
 function KeyMissingAlert() {
   return (
     <Alert className="border-warning/30 bg-warning/5 text-warning-foreground">
       <AlertTriangle className="h-4 w-4" />
       <AlertTitle className="font-semibold tracking-tight">Active Warning: Shared DEMO_KEY Fallback Mode</AlertTitle>
       <AlertDescription className="text-xs opacity-90">
-        Global application token config <code className="rounded bg-muted font-mono px-1 py-0.5 text-[11px]">VITE_NASA_API_KEY</code> is unpopulated. 
-        Falling back to standard limits. Please populate environment values inside your active hosting parameters to upgrade stream boundaries.
+        Global application token config <code className="rounded bg-muted font-mono px-1 py-0.5 text-[11px]">VITE_NASA_API_KEY</code> is unpopulated.
       </AlertDescription>
     </Alert>
   );
