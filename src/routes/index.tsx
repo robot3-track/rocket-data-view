@@ -48,6 +48,7 @@ function WorkspacePage() {
       const r = await fetchDataset(id);
       setResult(r);
     } catch (e) {
+      setResult(null);
       setError(e instanceof Error ? e.message : "Failed to fetch NASA data.");
     } finally {
       setLoading(false);
@@ -115,28 +116,28 @@ function WorkspacePage() {
                 <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                   <KpiCard
                     label="Active Anomalies"
-                    value={result?.kpis.activeAnomalies ?? "—"}
+                    value={result?.kpis.activeAnomalies ?? "N/A"}
                     hint="Flagged in current dataset"
                     icon={AlertTriangle}
                     tone="destructive"
                   />
                   <KpiCard
                     label="Total Data Points"
-                    value={result ? result.kpis.totalDataPoints.toLocaleString() : "—"}
+                    value={result ? result.kpis.totalDataPoints.toLocaleString() : "N/A"}
                     hint={datasetLabel}
                     icon={Database}
                     tone="primary"
                   />
                   <KpiCard
                     label="System Health"
-                    value={result ? `${result.kpis.systemHealth}%` : "—"}
+                    value={result ? `${result.kpis.systemHealth}%` : "N/A"}
                     hint="Composite signal score"
                     icon={HeartPulse}
                     tone="success"
                   />
                   <KpiCard
                     label="Solar Activity"
-                    value={result?.kpis.solarActivity ?? "—"}
+                    value={result?.kpis.solarActivity ?? "N/A"}
                     hint="Current heliophysics state"
                     icon={Sun}
                     tone="warning"
