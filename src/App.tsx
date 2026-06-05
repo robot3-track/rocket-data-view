@@ -289,15 +289,63 @@ function IngestionTab({ dataset, result, datasetLabel, loading, onDatasetChange,
   );
 }
 
-function AnomaliesTab({ result, datasetLabel, anomalies }: MetricsPanelProps & { anomalies: DataPoint[] }) {
+function AnomaliesTab({ result, datasetLabel, anomalies }: MetricsPanelProps & { anomalies: any[] }) {
+  const criticalCount = anomalies.filter((p: any) => p.isAnomaly && Math.abs(p.value || 0) > 80).length;
+  const warningCount = anomalies.length - criticalCount;
+
   return (
-    <div className="space-y-4">
-      <div className="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
-        <DataTable points={anomalies} datasetLabel={`${datasetLabel} (Filtered items)`} />
+    <div className="space-y-6 animate-in fade-in duration-300">
+      {/* Dynamic Summary Stats Block */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div className="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm flex items-center justify-between">
+          <div className="space-y-1">
+            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-tight block">Detected Vectors</span>
+            <span className="text-xl font-bold text-slate-900">{anomalies.length}</span>
+          </div>
+          <div className="p-2.5 rounded-xl bg-amber-50 text-amber-600">
+            <AlertTriangle className="h-4 w-4" />
+          </div>
+        </div>
+
+        <div className="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm flex items-center justify-between">
+          <div className="space-y-1">
+            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-tight block">Critical Triggers</span>
+            <span className="text-xl font-bold text-rose-600">{criticalCount}</span>
+          </div>
+          <div className="p-2.5 rounded-xl bg-rose-50 text-rose-600">
+            <ShieldAlert className="h-4 w-4" />
+          </div>
+        </div>
+
+        <div className="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm flex items-center justify-between">
+          <div className="space-y-1">
+            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-tight block">Warning Deviation Flags</span>
+            <span className="text-xl font-bold text-amber-600">{warningCount}</span>
+          </div>
+          <div className="p-2.5 rounded-xl bg-amber-50 text-amber-500">
+            <Activity className="h-4 w-4" />
+          </div>
+        </div>
+      </div>
+
+      {/* Main Filtered Incident Table Module */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+            <ShieldAlert className="h-4 w-4 text-rose-500" /> Active Incident Record Log
+          </span>
+          <span className="px-2 py-0.5 text-[10px] bg-slate-100 text-slate-600 rounded-md font-mono">
+            {datasetLabel}
+          </span>
+        </div>
+        <div className="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden p-2">
+          <DataTable points={anomalies} datasetLabel="Anomaly Threshold Isolations" />
+        </div>
       </div>
     </div>
   );
 }
+
 
 function SettingsTab() {
   return (
