@@ -159,80 +159,67 @@ function classToValue(c?: string): number {
 }
 
 async function fetchMars(): Promise<AnalysisResult> {
-  // InSight feed; if retired/empty, return synthetic but clearly-marked data.
+  // InSight weather feed. If the feed is empty (the mission is retired and
+  // NASA frequently returns no sols), we surface that as "no data" rather
+  // than fabricating values.
   const url = `https://api.nasa.gov/insight_weather/?api_key=${KEY}&feedtype=json&ver=1.0`;
-  try {
-    const json = await getJSON(url);
-    const sols: string[] = json.sol_keys ?? [];
-    if (sols.length === 0) throw new Error("empty");
-    const points: DataPoint[] = [];
-    const series: { date: string; value: number }[] = [];
-    for (const sol of sols) {
-      const s = json[sol];
-      const t = s?.AT?.av;
-      const p = s?.PRE?.av;
-      const w = s?.HWS?.av;
-      const date = s?.First_UTC?.slice(0, 10) ?? sol;
-      if (typeof t === "number") {
-        series.push({ date, value: t });
-        points.push({
-          id: `sol-${sol}-AT`,
-          label: `Sol ${sol} Avg Temp`,
-          value: Math.round(t * 10) / 10,
-          category: "Temperature (°C)",
-          timestamp: date,
-          anomaly: t < -90,
-        });
-      }
-      if (typeof p === "number")
-        points.push({ id: `sol-${sol}-P`, label: `Sol ${sol} Pressure`, value: Math.round(p), category: "Pressure (Pa)", timestamp: date, anomaly: false });
-      if (typeof w === "number")
-        points.push({ id: `sol-${sol}-W`, label: `Sol ${sol} Wind`, value: Math.round(w * 10) / 10, category: "Wind (m/s)", timestamp: date, anomaly: w > 15 });
-    }
-    return {
-      dataset: "mars-weather",
-      fetchedAt: new Date().toISOString(),
-      points,
-      series,
-      kpis: {
-        activeAnomalies: points.filter((p) => p.anomaly).length,
-        totalDataPoints: points.length,
-        systemHealth: 88,
-        solarActivity: "N/A (Mars)",
-      },
-    };
-  } catch {
-    // Synthetic fallback for retired endpoint
-    const today = new Date();
-    const points: DataPoint[] = [];
-    const series: { date: string; value: number }[] = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(today.getTime() - i * 86400000);
-      const date = ymd(d);
-      const t = -62 + Math.sin(i) * 8;
+  const json = await getJSON(url);
+  const sols: string[] = json.sol_keys ?? [];
+  if (sols.length === 0) {
+    throw new Error(
+      "NASA InSight weather feed returned no sols. The mission is retired and the public endpoint is intermittently empty.",
+    );
+  }
+  const points: DataPoint[] = [];
+  const series: { date: string; value: number }[] = [];
+  for (const sol of sols) {
+    const s = json[sol];
+    const t = s?.AT?.av;
+    const p = s?.PRE?.av;
+    const w = s?.HWS?.av;
+    const date = s?.First_UTC?.slice(0, 10) ?? sol;
+    if (typeof t === "number") {
       series.push({ date, value: t });
       points.push({
-        id: `syn-${i}`,
-        label: `Sol approx ${1000 + i}`,
+        id: `sol-${sol}-AT`,
+        label: `Sol ${sol} Avg Temp`,
         value: Math.round(t * 10) / 10,
         category: "Temperature (°C)",
         timestamp: date,
-        anomaly: t < -68,
+        anomaly: t < -90,
       });
     }
-    return {
-      dataset: "mars-weather",
-      fetchedAt: new Date().toISOString(),
-      points,
-      series,
-      kpis: {
-        activeAnomalies: points.filter((p) => p.anomaly).length,
-        totalDataPoints: points.length,
-        systemHealth: 75,
-        solarActivity: "N/A (Mars)",
-      },
-    };
+    if (typeof p === "number")
+      points.push({
+        id: `sol-${sol}-P`,
+        label: `Sol ${sol} Pressure`,
+        value: Math.round(p),
+        category: "Pressure (Pa)",
+        timestamp: date,
+        anomaly: false,
+      });
+    if (typeof w === "number")
+      points.push({
+        id: `sol-${sol}-W`,
+        label: `Sol ${sol} Wind`,
+        value: Math.round(w * 10) / 10,
+        category: "Wind (m/s)",
+        timestamp: date,
+        anomaly: w > 15,
+      });
   }
+  return {
+    dataset: "mars-weather",
+    fetchedAt: new Date().toISOString(),
+    points,
+    series,
+    kpis: {
+      activeAnomalies: points.filter((p) => p.anomaly).length,
+      totalDataPoints: points.length,
+      systemHealth: 88,
+      solarActivity: "N/A (Mars)",
+    },
+  };
 }
 
 export async function fetchDataset(id: DatasetId): Promise<AnalysisResult> {
