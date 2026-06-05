@@ -12,15 +12,16 @@ import {
 } from "@/components/ui/sidebar";
 
 interface Props {
-  // FIXED: Expanded runtime string literal definition to include the documentation view token
-  activeTab: "overview" | "ingestion" | "anomalies" | "settings" | "documentation";
+  // Added "correlation" to the allowed activeTab literal union
+  activeTab: "overview" | "ingestion" | "anomalies" | "settings" | "documentation" | "correlation";
   onSelect: (tab: Props["activeTab"]) => void;
 }
 
-// FIXED: Appended the operational manual routing metadata object directly into the map array
+// Appended the Advanced Correlation configuration block to the static navigation manifest
 const NAV = [
   { id: "overview", label: "Overview", icon: LineChart },
   { id: "ingestion", label: "NASA API Ingestion", icon: Database },
+  { id: "correlation", label: "Advanced Correlation", icon: Activity },
   { id: "anomalies", label: "Anomalies", icon: Activity },
   { id: "documentation", label: "Operations Manual", icon: BookOpen },
   { id: "settings", label: "Settings", icon: Settings },
