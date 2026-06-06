@@ -12,12 +12,10 @@ import {
 } from "@/components/ui/sidebar";
 
 interface Props {
-  // Added "correlation" to the allowed activeTab literal union
   activeTab: "overview" | "ingestion" | "anomalies" | "settings" | "documentation" | "correlation";
   onSelect: (tab: Props["activeTab"]) => void;
 }
 
-// Appended the Advanced Correlation configuration block to the static navigation manifest
 const NAV = [
   { id: "overview", label: "Overview", icon: LineChart },
   { id: "ingestion", label: "NASA API Ingestion", icon: Database },
@@ -29,8 +27,12 @@ const NAV = [
 
 export function AppSidebar({ activeTab, onSelect }: Props) {
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="border-b border-sidebar-border">
+    <Sidebar 
+      collapsible="icon" 
+      className="h-screen sticky top-0 flex flex-col overflow-hidden border-r border-sidebar-border bg-sidebar"
+    >
+      {/* Strictly Static Non-Scrolling Header */}
+      <SidebarHeader className="border-b border-sidebar-border shrink-0 bg-sidebar z-10">
         <div className="flex items-center gap-2 px-2 py-1">
           <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/15 text-primary">
             <Satellite className="h-5 w-5" />
@@ -41,7 +43,9 @@ export function AppSidebar({ activeTab, onSelect }: Props) {
           </div>
         </div>
       </SidebarHeader>
-      <SidebarContent>
+
+      {/* Independently Scrollable Navigation Body */}
+      <SidebarContent className="flex-1 overflow-y-auto min-h-0 custom-scrollbar">
         <SidebarGroup>
           <SidebarGroupLabel>Workspace</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -61,18 +65,18 @@ export function AppSidebar({ activeTab, onSelect }: Props) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>Status</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <div className="px-2 py-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-              <div className="flex items-center gap-2">
-                <Radio className="h-3.5 w-3.5 text-[color:var(--success)] animate-pulse" />
-                <span>Telemetry online</span>
-              </div>
-            </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
+
+      {/* Strictly Static Bottom Footer Slot */}
+      <div className="p-4 border-t border-sidebar-border shrink-0 bg-sidebar mt-auto">
+        <SidebarGroupLabel className="px-0 mb-1">Status</SidebarGroupLabel>
+        <div className="py-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
+          <div className="flex items-center gap-2">
+            <Radio className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
+            <span className="font-medium text-slate-600">Telemetry online</span>
+          </div>
+        </div>
+      </div>
     </Sidebar>
   );
 }
