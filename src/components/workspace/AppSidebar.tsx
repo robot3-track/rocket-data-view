@@ -31,10 +31,10 @@ export function AppSidebar({ activeTab, onSelect }: Props) {
       collapsible="icon" 
       className="h-screen sticky top-0 flex flex-col overflow-hidden border-r border-sidebar-border bg-sidebar"
     >
-      {/* Strictly Static Non-Scrolling Header */}
-      <SidebarHeader className="border-b border-sidebar-border shrink-0 bg-sidebar z-10">
-        <div className="flex items-center gap-2 px-2 py-1">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/15 text-primary">
+      {/* Absolute Rigid Top Header Logo Container */}
+      <SidebarHeader className="absolute top-0 left-0 right-0 border-b border-sidebar-border bg-sidebar z-30 h-[57px] flex items-center justify-center">
+        <div className="flex items-center gap-2 px-4 py-1 w-full">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
             <Satellite className="h-5 w-5" />
           </div>
           <div className="min-w-0 group-data-[collapsible=icon]:hidden">
@@ -44,8 +44,8 @@ export function AppSidebar({ activeTab, onSelect }: Props) {
         </div>
       </SidebarHeader>
 
-      {/* Independently Scrollable Navigation Body */}
-      <SidebarContent className="flex-1 overflow-y-auto min-h-0 custom-scrollbar">
+      {/* Main Scrollable Core — with a 57px offset spacing buffer at the top to clear the sticky header */}
+      <SidebarContent className="flex-1 overflow-y-auto pt-[57px] pb-[70px] min-h-0 custom-scrollbar">
         <SidebarGroup>
           <SidebarGroupLabel>Workspace</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -67,10 +67,10 @@ export function AppSidebar({ activeTab, onSelect }: Props) {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Strictly Static Bottom Footer Slot */}
-      <div className="p-4 border-t border-sidebar-border shrink-0 bg-sidebar mt-auto">
-        <SidebarGroupLabel className="px-0 mb-1">Status</SidebarGroupLabel>
-        <div className="py-1 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
+      {/* Absolute Rigid Bottom Footer Status Container */}
+      <div className="absolute bottom-0 left-0 right-0 h-[70px] border-t border-sidebar-border bg-sidebar z-30 px-4 flex flex-col justify-center">
+        <SidebarGroupLabel className="px-0 mb-0.5">Status</SidebarGroupLabel>
+        <div className="text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
           <div className="flex items-center gap-2">
             <Radio className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
             <span className="font-medium text-slate-600">Telemetry online</span>
