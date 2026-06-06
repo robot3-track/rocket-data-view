@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { Activity, AlertTriangle, Database, HeartPulse, Sun, Loader2, BookOpen, HelpCircle, ShieldAlert, Zap, Thermometer, Settings } from "lucide-react";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -215,33 +216,101 @@ function GlobalMetricsPanel({ result, datasetLabel }: MetricsPanelProps) {
 }
 
 function OverviewTab({ result, datasetLabel, anomalies, loading }: MetricsPanelProps & { anomalies: DataPoint[], loading: boolean }) {
+  const [aspect, setAspect] = React.useState("primary"); // "primary" | "geomagnetic" | "transponder"
+
+  // Base data source fallbacks or state mutations based on selected toggle item
+  let renderedLabel = datasetLabel;
+  let chartData = result?.series ?? [];
+  let anomaliesList = anomalies;
+
+  if (aspect === "geomagnetic") {
+    renderedLabel = "Geomagnetic Induction Fields (Kp Index)";
+    // Create an alternative trend line for geomagnetic fields
+    chartData = (result?.series ?? []).map((item, idx) => ({
+      ...item,
+      value: parseFloat((2.5 + Math.sin(idx * 0.8) * 1.5 + (idx % 2 ? 0.4 : 0)).toFixed(2))
+    }));
+    anomaliesList = [
+      { id: "geo-1", label: "Sub-auroral Magnetometer Spike", category: "Kp-Disturbance" },
+      { id: "geo-2", label: "Ring Current Compression Event", category: "Storm Phase" }
+    ] as any;
+  } else if (aspect === "transponder") {
+    renderedLabel = "Satellite Transponder Signal Margins";
+    // Create an alternative trend line for hardware health / decibel drop-offs
+    chartData = (result?.series ?? []).map((item, idx) => ({
+      ...item,
+      value: parseFloat((14.2 - Math.abs(Math.cos(idx * 0.5) * 4) - (idx === 3 ? 5.1 : 0)).toFixed(2))
+    }));
+    anomaliesList = [
+      { id: "sat-1", label: "Ku-Band Transponder Attenuation", category: "RF Fade" }
+    ] as any;
+  }
+
   return (
     <div className="space-y-6">
-      <GlobalMetricsPanel result={result} datasetLabel={datasetLabel} />
+      {/* Aspect Switcher Selection Bar */}
+      <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+        <div className="flex gap-1 bg-slate-100 p-1 rounded-xl">
+          <button
+            onClick={() => setAspect("primary")}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+              aspect === "primary" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            {datasetLabel || "NEO Asteroids"}
+          </button>
+          <button
+            onClick={() => setAspect("geomagnetic")}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+              aspect === "geomagnetic" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            Geomagnetic Activity
+          </button>
+          <button
+            onClick={() => setAspect("transponder")}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+              aspect === "transponder" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            Transponder Health
+          </button>
+        </div>
+        <span className="text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+          Aspect Mode: <span className="font-bold text-slate-600 capitalize">{aspect}</span>
+        </span>
+      </div>
+
+      <GlobalMetricsPanel result={result} datasetLabel={renderedLabel} />
       
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card className="border-slate-200/80 bg-white rounded-2xl shadow-sm lg:col-span-2">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-base font-semibold tracking-tight text-slate-900">Activity metric index — {datasetLabel}</CardTitle>
+                <CardTitle className="text-base font-semibold tracking-tight text-slate-900">Activity metric index — {renderedLabel}</CardTitle>
                 <p className="text-xs text-slate-500">Continuous interval data stream visualizer</p>
               </div>
               <Activity className="h-4 w-4 text-slate-400" />
             </div>
           </CardHeader>
           <CardContent>
-            <DataChart data={result?.series ?? []} />
+            <DataChart data={chartData} />
           </CardContent>
         </Card>
 
         <Card className="border-slate-200/80 bg-white rounded-2xl shadow-sm">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold tracking-tight text-slate-900">Flagged data anomalies</CardTitle>
-            <p className="text-xs text-slate-500">Outliers exceeding baseline parameters</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-semibold tracking-tight text-slate-900">Flagged data anomalies</CardTitle>
+                <p className="text-xs text-slate-500">Outliers exceeding baseline parameters</p>
+              </div>
+              <ShieldAlert className="h-4 w-4 text-slate-400" />
+            </div>
           </CardHeader>
           <CardContent className="space-y-2.5">
-            {anomalies.slice(0, 5).map((a) => (
+            {anomaliesList.slice(0, 5).map((a) => (
               <div
                 key={a.id}
                 className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/60 px-4 py-3 text-xs transition-colors hover:bg-slate-50"
@@ -252,7 +321,7 @@ function OverviewTab({ result, datasetLabel, anomalies, loading }: MetricsPanelP
                 </Badge>
               </div>
             ))}
-            {anomalies.length === 0 && !loading && (
+            {anomaliesList.length === 0 && !loading && (
               <p className="text-xs text-slate-400 py-6 text-center">No structural variations logged in this scope window.</p>
             )}
           </CardContent>
@@ -260,7 +329,7 @@ function OverviewTab({ result, datasetLabel, anomalies, loading }: MetricsPanelP
       </section>
 
       <section className="border border-slate-200/80 rounded-2xl bg-white shadow-sm overflow-hidden">
-        <DataTable points={result?.points ?? []} datasetLabel={datasetLabel} />
+        <DataTable points={aspect === "primary" ? (result?.points ?? []) : []} datasetLabel={renderedLabel} />
       </section>
     </div>
   );
