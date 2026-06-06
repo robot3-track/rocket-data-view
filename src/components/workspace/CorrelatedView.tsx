@@ -1,7 +1,7 @@
-import { AdvancedDataChart } from "./AdvancedDataChart";
 import { useState, useEffect } from "react";
-import { Activity, ShieldAlert, Zap, Orbit, RefreshCw, BarChart2 } from "lucide-react";
+import { Activity, ShieldAlert, Zap, Orbit, RefreshCw, BarChart2, Clock } from "lucide-react";
 import { fetchSpaceWeatherCorrelation, type TelemetryStream, type CorrelationMetrics } from "@/services/spaceWeatherCorrelation";
+import { AdvancedDataChart } from "./AdvancedDataChart";
 
 export function CorrelatedView() {
   const [isSyncing, setIsSyncing] = useState(false);
@@ -41,6 +41,12 @@ export function CorrelatedView() {
           <p className="text-xs text-slate-400">
             Evaluating active correlation variables between solar wind velocity indices and orbital sensor anomalies.
           </p>
+          
+          {/* Real-time Loading Disclaimer Notice */}
+          <div className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-lg bg-amber-50 text-[11px] font-medium text-amber-700 border border-amber-200/60">
+            <Clock className="h-3 w-3 text-amber-600 shrink-0" />
+            <span>Operational Notice: Deep-space telemetry ingestion cycles can take up to 60 seconds to fully compile.</span>
+          </div>
         </div>
         <button
           onClick={triggerSync}
@@ -55,7 +61,7 @@ export function CorrelatedView() {
       {/* Grid Workspace */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Stream Table Module */}
+        {/* Stream Chart & Table Module */}
         <div className="lg:col-span-2 p-6 bg-white rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
           {/* Multi-source Overlay Data Matrix Trend Line */}
           <div className="pb-2">
@@ -63,6 +69,7 @@ export function CorrelatedView() {
             <AdvancedDataChart streams={streams} />
           </div>
           <hr className="border-slate-100 my-4" />
+
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
               <Activity className="h-4 w-4 text-emerald-500" /> Active Deviation Vectors
