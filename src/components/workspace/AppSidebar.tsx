@@ -27,56 +27,61 @@ const NAV = [
 
 export function AppSidebar({ activeTab, onSelect }: Props) {
   return (
-    <Sidebar 
-      collapsible="icon" 
-      className="h-screen sticky top-0 flex flex-col overflow-hidden border-r border-sidebar-border bg-sidebar"
-    >
-      {/* Absolute Rigid Top Header Logo Container */}
-      <SidebarHeader className="absolute top-0 left-0 right-0 border-b border-sidebar-border bg-sidebar z-30 h-[57px] flex items-center justify-center">
-        <div className="flex items-center gap-2 px-4 py-1 w-full">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
+    <div className="w-[260px] shrink-0">
+      <Sidebar 
+        collapsible="icon" 
+        className="fixed inset-y-0 left-0 w-[260px] h-screen bg-[#0b1329] text-slate-200 flex flex-col border-r border-slate-800/60 z-50"
+      >
+        {/* Strictly Stationary Logo Header */}
+        <div className="p-4 border-b border-slate-800/80 flex items-center gap-3 bg-[#0b1329] shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20">
             <Satellite className="h-5 w-5" />
           </div>
-          <div className="min-w-0 group-data-[collapsible=icon]:hidden">
-            <p className="truncate text-sm font-semibold">NASA Analytics</p>
-            <p className="truncate text-xs text-muted-foreground">Mission Workspace</p>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-slate-100">NASA Analytics</p>
+            <p className="truncate text-xs text-slate-400">Mission Workspace</p>
           </div>
         </div>
-      </SidebarHeader>
 
-      {/* Main Scrollable Core — with a 57px offset spacing buffer at the top to clear the sticky header */}
-      <SidebarContent className="flex-1 overflow-y-auto pt-[57px] pb-[70px] min-h-0 custom-scrollbar">
-        <SidebarGroup>
-          <SidebarGroupLabel>Workspace</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {NAV.map((item) => (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton
-                    isActive={activeTab === item.id}
+        {/* Scrollable Navigation Items */}
+        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+          <div>
+            <span className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">
+              Workspace
+            </span>
+            <div className="space-y-1">
+              {NAV.map((item) => {
+                const IsActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
                     onClick={() => onSelect(item.id)}
-                    tooltip={item.label}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+                      IsActive 
+                        ? "bg-sky-500/15 text-sky-400 border border-sky-500/20 shadow-sm" 
+                        : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent"
+                    }`}
                   >
-                    <item.icon className="h-4 w-4" />
+                    <item.icon className={`h-4 w-4 ${IsActive ? "text-sky-400" : "text-slate-400"}`} />
                     <span>{item.label}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-
-      {/* Absolute Rigid Bottom Footer Status Container */}
-      <div className="absolute bottom-0 left-0 right-0 h-[70px] border-t border-sidebar-border bg-sidebar z-30 px-4 flex flex-col justify-center">
-        <SidebarGroupLabel className="px-0 mb-0.5">Status</SidebarGroupLabel>
-        <div className="text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-          <div className="flex items-center gap-2">
-            <Radio className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
-            <span className="font-medium text-slate-600">Telemetry online</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
-    </Sidebar>
+
+        {/* Fixed Status Footer Area */}
+        <div className="p-4 border-t border-slate-800/80 bg-[#0b1329] shrink-0">
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">
+            Status
+          </span>
+          <div className="flex items-center gap-2 px-1 text-xs text-slate-400">
+            <Radio className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
+            <span className="font-medium">Telemetry online</span>
+          </div>
+        </div>
+      </Sidebar>
+    </div>
   );
 }
