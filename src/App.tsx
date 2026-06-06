@@ -217,39 +217,52 @@ function GlobalMetricsPanel({ result, datasetLabel }: MetricsPanelProps) {
   );
 }
 
-function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange, activeDataset }: MetricsPanelProps & { anomalies: DataPoint[], loading: boolean, activeDataset: string, onDatasetChange: (val: any) => void }) {
+function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange, activeDataset }: MetricsPanelProps & { anomalies: DataPoint[], loading: boolean, activeDataset: any, onDatasetChange: (val: any) => void }) {
   return (
     <div className="space-y-6">
       {/* Aspect Switcher Selection Bar linked directly to true NASA data streams */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-2">
         <div className="flex gap-1 bg-slate-100 p-1 rounded-xl">
           <button
-            onClick={() => onDatasetChange("cme")}
+            onClick={() => onDatasetChange("neo")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              activeDataset === "cme" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              activeDataset === "neo" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
           >
             NEO Asteroids
           </button>
           <button
-            onClick={() => onDatasetChange("gst")}
+            onClick={() => onDatasetChange("mars")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              activeDataset === "gst" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              activeDataset === "mars" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
           >
-            Geomagnetic Activity
+            Mars Weather (InSight)
           </button>
           <button
-            onClick={() => onDatasetChange("ips")}
+            onClick={() => onDatasetChange("apod")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              activeDataset === "ips" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              activeDataset === "apod" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
           >
-            Transponder Health
+            Astronomy Picture of the Day
+          </button>
+          <button
+            onClick={() => onDatasetChange("flr")}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+              activeDataset === "flr" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            Solar Flares (DONKI)
           </button>
         </div>
         <span className="text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
-          Source Feed: <span className="font-bold text-slate-600 uppercase">{activeDataset} Array</span>
+          Source Feed: <span className="font-bold text-slate-700 uppercase">
+            {activeDataset === "neo" && "NEO_ARRAY"}
+            {activeDataset === "mars" && "INSIGHT_SOL_ARRAY"}
+            {activeDataset === "apod" && "APOD_METADATA"}
+            {activeDataset === "flr" && "DONKI_FLR_ARRAY"}
+          </span>
         </span>
       </div>
 
