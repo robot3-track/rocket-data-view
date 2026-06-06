@@ -1,4 +1,4 @@
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Line } from "recharts";
+import { ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line } from "recharts";
 
 interface AdvancedDataChartProps {
   streams: Array<{
@@ -11,103 +11,97 @@ interface AdvancedDataChartProps {
 }
 
 export function AdvancedDataChart({ streams }: AdvancedDataChartProps) {
-  // 1. Parse historical data streams
+  if (!streams || streams.length === 0) {
+    return <div className="w-full h-[320px] flex items-center justify-center text-xs text-slate-400">No active telemetry vectors mapped.</div>;
+  }
+
+  // 1. Unified parsing routine for continuous tracking
   const historicalData = streams.map((s, index) => {
     const match = s.metric.match(/\d+/);
-    const windSpeed = match ? parseInt(match[0], 10) : 400 + (s.deviation * 100);
-    const geomagneticIndex = parseFloat((Math.abs(s.deviation) * 2.1 + 1.2).toFixed(1));
+    // Bulletproof baseline math if regex parsing meets arbitrary fallback strings
+    const windSpeed = match ? parseInt(match[0], 10) : Math.round(450 + (s.deviation * 80));
+    const geomagneticIndex = parseFloat((Math.abs(s.deviation) * 1.8 + 1.5).toFixed(1));
 
     return {
-      time: s.timestamp ? s.timestamp.split(' ')[0] : `T-${index}`,
+      time: s.timestamp ? s.timestamp.split(' ')[0] : `Point ${index}`,
       "Solar Wind Speed (km/s)": windSpeed,
       "Geomagnetic Index (Kp)": geomagneticIndex,
-      isPrediction: false,
+      strokeDash: "0", // Solid line indicator
     };
   }).reverse();
 
-  // 2. Generate predictive trend projections (Simple Linear Regression slopes)
+  // 2. Generate mathematical forecast trend boundaries
   const len = historicalData.length;
-  let predictedData: any[] = [];
+  const forecastData: any[] = [];
   
-  if (len > 1) {
+  if (len > 0) {
     const lastPoint = historicalData[len - 1];
-    let avgWindDelta = 0;
-    let avgGeoDelta = 0;
-
-    // Calculate baseline rate of change over past points
-    for (let i = 1; i < len; i++) {
-      avgWindDelta += historicalData[i]["Solar Wind Speed (km/s)"] - historicalData[i-1]["Solar Wind Speed (km/s)"];
-      avgGeoDelta += historicalData[i]["Geomagnetic Index (Kp)"] - historicalData[i-1]["Geomagnetic Index (Kp)"];
+    
+    // Determine the direction rate of change over time safely
+    let deltaWind = 15; 
+    let deltaGeo = 0.2;
+    if (len > 1) {
+      deltaWind = Math.round((historicalData[len - 1]["Solar Wind Speed (km/s)"] - historicalData[0]["Solar Wind Speed (km/s)"]) / len);
+      deltaGeo = parseFloat(((historicalData[len - 1]["Geomagnetic Index (Kp)"] - historicalData[0]["Geomagnetic Index (Kp)"]) / len).toFixed(2));
     }
-    avgWindDelta /= (len - 1);
-    avgGeoDelta /= (len - 1);
 
-    // Build future prediction milestones (+10m, +20m, +30m forecast windows)
-    predictedData = [
-      {
-        ...lastPoint,
-        time: lastPoint.time + " (Now)",
-        "Predicted Wind Speed": lastPoint["Solar Wind Speed (km/s)"],
-        "Predicted Geomagnetic Index": lastPoint["Geomagnetic Index (Kp)"],
-        isPrediction: false
-      },
-      {
-        time: "+10m Forecast",
-        "Predicted Wind Speed": Math.round(lastPoint["Solar Wind Speed (km/s)"] + avgWindDelta * 1.2),
-        "Predicted Geomagnetic Index": parseFloat((lastPoint["Geomagnetic Index (Kp)"] + avgGeoDelta * 1.2).toFixed(1)),
-        isPrediction: true
-      },
-      {
-        time: "+20m Forecast",
-        "Predicted Wind Speed": Math.round(lastPoint["Solar Wind Speed (km/s)"] + avgWindDelta * 2.4),
-        "Predicted Geomagnetic Index": parseFloat((lastPoint["Geomagnetic Index (Kp)"] + avgGeoDelta * 2.4).toFixed(1)),
-        isPrediction: true
-      },
-      {
-        time: "+30m Forecast",
-        "Predicted Wind Speed": Math.round(lastPoint["Solar Wind Speed (km/s)"] + avgWindDelta * 3.6),
-        "Predicted Geomagnetic Index": parseFloat((lastPoint["Geomagnetic Index (Kp)"] + avgGeoDelta * 3.6).toFixed(1)),
-        isPrediction: true
-      }
-    ];
+    // Append continuous timeline predictions matching exact parent structural keys
+    forecastData.push({
+      time: "+10m Forecast",
+      "Solar Wind Speed (km/s)": Math.max(200, Math.round(lastPoint["Solar Wind Speed (km/s)"] + deltaWind)),
+      "Geomagnetic Index (Kp)": Math.max(0, parseFloat((lastPoint["Geomagnetic Index (Kp)"] + deltaGeo).toFixed(1))),
+      strokeDash: "5 5", // Dashed line indicator
+    });
+
+    forecastData.push({
+      time: "+20m Forecast",
+      "Solar Wind Speed (km/s)": Math.max(200, Math.round(lastPoint["Solar Wind Speed (km/s)"] + deltaWind * 2)),
+      "Geomagnetic Index (Kp)": Math.max(0, parseFloat((lastPoint["Geomagnetic Index (Kp)"] + deltaGeo * 2).toFixed(1))),
+      strokeDash: "5 5",
+    });
+
+    forecastData.push({
+      time: "+30m Forecast",
+      "Solar Wind Speed (km/s)": Math.max(200, Math.round(lastPoint["Solar Wind Speed (km/s)"] + deltaWind * 3)),
+      "Geomagnetic Index (Kp)": Math.max(0, parseFloat((lastPoint["Geomagnetic Index (Kp)"] + deltaGeo * 3).toFixed(1))),
+      strokeDash: "5 5",
+    });
   }
 
-  // Combine both historical paths and prediction layers safely
-  const combinedChartDataset = [...historicalData, ...predictedData.slice(1)];
+  const completeUnifiedTimeline = [...historicalData, ...forecastData];
 
   return (
     <div className="w-full h-[320px] bg-slate-50/50 p-2 rounded-xl border border-slate-100">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={combinedChartDataset} margin={{ top: 15, right: 15, left: -20, bottom: 0 }}>
-          <defs>
-            <linearGradient id="colorWind" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.15}/>
-              <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
-            </linearGradient>
-            <linearGradient id="colorGeo" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.15}/>
-              <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
-            </linearGradient>
-          </defs>
+        <LineChart data={completeUnifiedTimeline} margin={{ top: 15, right: 15, left: -20, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
           <XAxis dataKey="time" stroke="#94a3b8" fontSize={10} tickLine={false} />
-          <YAxis yAxisId="left" stroke="#0ea5e9" fontSize={10} tickLine={false} domain={['dataMin - 50', 'dataMax + 50']} />
+          <YAxis yAxisId="left" stroke="#0ea5e9" fontSize={10} tickLine={false} domain={['dataMin - 100', 'dataMax + 100']} />
           <YAxis yAxisId="right" orientation="right" stroke="#f59e0b" fontSize={10} tickLine={false} />
           
-          <Tooltip 
-            contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '11px' }}
-            formatter={(value, name) => [value, name]}
-          />
+          <Tooltip contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '11px' }} />
           <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
           
-          {/* Historical Data Series (Solid Lines) */}
-          <Area yAxisId="left" type="monotone" dataKey="Solar Wind Speed (km/s)" stroke="#0ea5e9" strokeWidth={2.5} fill="url(#colorWind)" connectNulls />
-          <Area yAxisId="right" type="monotone" dataKey="Geomagnetic Index (Kp)" stroke="#f59e0b" strokeWidth={2.5} fill="url(#colorGeo)" connectNulls />
-          
-          {/* Predictive Modeling Streams (Dashed Lines) */}
-          <Line yAxisId="left" type="monotone" dataKey="Predicted Wind Speed" stroke="#0ea5e9" strokeWidth={2.5} strokeDasharray="5 5" dot={{ r: 3 }} connectNulls activeDot={{ r: 5 }} />
-          <Line yAxisId="right" type="monotone" dataKey="Predicted Geomagnetic Index" stroke="#f59e0b" strokeWidth={2.5} strokeDasharray="5 5" dot={{ r: 3 }} connectNulls activeDot={{ r: 5 }} />
-        </AreaChart>
+          {/* Continuous Line rendering with segmented forecast dash array triggers */}
+          <Line 
+            yAxisId="left"
+            type="monotone" 
+            dataKey="Solar Wind Speed (km/s)" 
+            stroke="#0ea5e9" 
+            strokeWidth={3}
+            dot={(props) => props.payload.strokeDash !== "0" ? <circle cx={props.cx} cy={props.cy} r={3} fill="#0ea5e9" stroke="none"/> : false}
+            strokeDasharray={completeUnifiedTimeline.some(d => d.strokeDash !== "0") ? undefined : "0"}
+          />
+          <Line 
+            yAxisId="right"
+            type="monotone" 
+            dataKey="Geomagnetic Index (Kp)" 
+            stroke="#f59e0b" 
+            strokeWidth={3}
+            dot={(props) => props.payload.strokeDash !== "0" ? <circle cx={props.cx} cy={props.cy} r={3} fill="#f59e0b" stroke="none"/> : false}
+            strokeDasharray={completeUnifiedTimeline.some(d => d.strokeDash !== "0") ? undefined : "0"}
+          />
+        </LineChart>
       </ResponsiveContainer>
     </div>
   );
