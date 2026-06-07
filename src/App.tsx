@@ -220,11 +220,14 @@ function GlobalMetricsPanel({ result, datasetLabel }: MetricsPanelProps) {
 function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange, activeDataset }: MetricsPanelProps & { anomalies: DataPoint[], loading: boolean, activeDataset: any, onDatasetChange: (val: any) => void }) {
   return (
     <div className="space-y-6">
-      {/* Aspect Switcher Selection Bar mapped to valid backend DatasetId keys */}
+      {/* Aspect Switcher Selection Bar mapped explicitly to true NASA data streams */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-2">
         <div className="flex gap-1 bg-slate-100 p-1 rounded-xl">
           <button
-            onClick={() => onDatasetChange("neo")}
+            onClick={() => {
+              console.log("Switching dataset to: neo");
+              onDatasetChange("neo");
+            }}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               activeDataset === "neo" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
@@ -232,7 +235,10 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
             NEO Asteroids
           </button>
           <button
-            onClick={() => onDatasetChange("cme")}
+            onClick={() => {
+              console.log("Switching dataset to: cme");
+              onDatasetChange("cme");
+            }}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               activeDataset === "cme" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
@@ -240,7 +246,10 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
             Mars Weather (InSight)
           </button>
           <button
-            onClick={() => onDatasetChange("gst")}
+            onClick={() => {
+              console.log("Switching dataset to: gst");
+              onDatasetChange("gst");
+            }}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               activeDataset === "gst" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
@@ -248,7 +257,10 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
             Astronomy Picture of the Day
           </button>
           <button
-            onClick={() => onDatasetChange("ips")}
+            onClick={() => {
+              console.log("Switching dataset to: ips");
+              onDatasetChange("ips");
+            }}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               activeDataset === "ips" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
