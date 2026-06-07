@@ -220,7 +220,7 @@ function GlobalMetricsPanel({ result, datasetLabel }: MetricsPanelProps) {
 function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange, activeDataset }: MetricsPanelProps & { anomalies: DataPoint[], loading: boolean, activeDataset: any, onDatasetChange: (val: any) => void }) {
   return (
     <div className="space-y-6">
-      {/* Aspect Switcher Selection Bar mapped explicitly to valid NASA data strings */}
+      {/* Selection Sub-bar aligned with explicit service layer keys */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-2">
         <div className="flex gap-1 bg-slate-100 p-1 rounded-xl">
           <button
@@ -232,9 +232,9 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
             NEO Asteroids
           </button>
           <button
-            onClick={() => onDatasetChange("mars")}
+            onClick={() => onDatasetChange("mars-weather")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              activeDataset === "mars" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              activeDataset === "mars-weather" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
           >
             Mars Weather (InSight)
@@ -248,9 +248,9 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
             Astronomy Picture of the Day
           </button>
           <button
-            onClick={() => onDatasetChange("flr")}
+            onClick={() => onDatasetChange("donki-flr")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              activeDataset === "flr" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              activeDataset === "donki-flr" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
           >
             Solar Flares (DONKI)
@@ -259,9 +259,9 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
         <span className="text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
           Source Feed: <span className="font-bold text-slate-700 uppercase">
             {activeDataset === "neo" && "NEO_ARRAY"}
-            {activeDataset === "mars" && "INSIGHT_SOL_ARRAY"}
+            {activeDataset === "mars-weather" && "INSIGHT_SOL_ARRAY"}
             {activeDataset === "apod" && "APOD_METADATA"}
-            {activeDataset === "flr" && "DONKI_FLR_ARRAY"}
+            {activeDataset === "donki-flr" && "DONKI_FLR_ARRAY"}
           </span>
         </span>
       </div>
