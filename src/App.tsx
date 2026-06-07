@@ -91,11 +91,11 @@ export default function App() {
           </div>
         </div>
         
-        <SidebarInset className="flex flex-col bg-transparent">
-          {/* Approachable Sticky Header */}
-          <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-slate-200/60 bg-white/80 px-8 backdrop-blur transition-all">
-            <SidebarTrigger className="-ml-1 text-slate-500 hover:text-slate-800 transition-colors" />
-            <div className="flex flex-1 items-center justify-between">
+        <SidebarInset className="flex flex-col bg-transparent min-w-0 overflow-x-hidden">
+          {/* Approachable Sticky Header with responsive padding adjustments */}
+          <header className="sticky top-0 z-40 flex min-h-16 h-auto py-2 sm:py-0 items-center gap-4 border-b border-slate-200/60 bg-white/80 px-4 sm:px-6 backdrop-blur-md shrink-0">
+            <SidebarTrigger className="-ml-1 text-slate-500 hover:text-slate-800 transition-colors shrink-0" />
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 w-full py-1">
               <div>
                 <h1 className="text-sm font-semibold tracking-tight text-slate-900 capitalize">
                   {tab === "ingestion" ? "Data Ingestion Workspace" : `${tab} View`}
