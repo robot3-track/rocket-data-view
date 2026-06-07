@@ -220,14 +220,11 @@ function GlobalMetricsPanel({ result, datasetLabel }: MetricsPanelProps) {
 function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange, activeDataset }: MetricsPanelProps & { anomalies: DataPoint[], loading: boolean, activeDataset: any, onDatasetChange: (val: any) => void }) {
   return (
     <div className="space-y-6">
-      {/* Aspect Switcher Selection Bar mapped explicitly to true NASA data streams */}
+      {/* Aspect Switcher Selection Bar mapped explicitly to valid NASA data strings */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-2">
         <div className="flex gap-1 bg-slate-100 p-1 rounded-xl">
           <button
-            onClick={() => {
-              console.log("Switching dataset to: neo");
-              onDatasetChange("neo");
-            }}
+            onClick={() => onDatasetChange("neo")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               activeDataset === "neo" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
@@ -235,34 +232,25 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
             NEO Asteroids
           </button>
           <button
-            onClick={() => {
-              console.log("Switching dataset to: cme");
-              onDatasetChange("cme");
-            }}
+            onClick={() => onDatasetChange("mars")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              activeDataset === "cme" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              activeDataset === "mars" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
           >
             Mars Weather (InSight)
           </button>
           <button
-            onClick={() => {
-              console.log("Switching dataset to: gst");
-              onDatasetChange("gst");
-            }}
+            onClick={() => onDatasetChange("apod")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              activeDataset === "gst" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              activeDataset === "apod" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
           >
             Astronomy Picture of the Day
           </button>
           <button
-            onClick={() => {
-              console.log("Switching dataset to: ips");
-              onDatasetChange("ips");
-            }}
+            onClick={() => onDatasetChange("flr")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              activeDataset === "ips" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              activeDataset === "flr" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
           >
             Solar Flares (DONKI)
@@ -271,9 +259,9 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
         <span className="text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
           Source Feed: <span className="font-bold text-slate-700 uppercase">
             {activeDataset === "neo" && "NEO_ARRAY"}
-            {activeDataset === "cme" && "INSIGHT_SOL_ARRAY"}
-            {activeDataset === "gst" && "APOD_METADATA"}
-            {activeDataset === "ips" && "DONKI_FLR_ARRAY"}
+            {activeDataset === "mars" && "INSIGHT_SOL_ARRAY"}
+            {activeDataset === "apod" && "APOD_METADATA"}
+            {activeDataset === "flr" && "DONKI_FLR_ARRAY"}
           </span>
         </span>
       </div>
