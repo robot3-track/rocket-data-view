@@ -118,8 +118,8 @@ export default function App() {
             </div>
           </header>
 
-          {/* Main Layout Canvas Flow */}
-          <main className="flex-1 space-y-6 p-8 max-w-[1400px] w-full mx-auto">
+          {/* Main Layout Canvas Flow — Fixed padding and layout parameters for pristine mobile responsiveness */}
+          <main className="flex-1 space-y-6 p-4 md:p-8 w-full max-w-[1400px] mx-auto min-w-0 overflow-x-hidden">
             {!HAS_NASA_KEY && <KeyMissingAlert />}
             {error && <TelemetryFailureAlert message={error} />}
 
@@ -220,12 +220,14 @@ function GlobalMetricsPanel({ result, datasetLabel }: MetricsPanelProps) {
 function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange, activeDataset }: MetricsPanelProps & { anomalies: DataPoint[], loading: boolean, activeDataset: any, onDatasetChange: (val: any) => void }) {
   return (
     <div className="space-y-6">
-      {/* Selection Sub-bar aligned with explicit service layer keys */}
-      <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-        <div className="flex gap-1 bg-slate-100 p-1 rounded-xl">
+      {/* 💡 Changed to flex-col on mobile and flex-row on desktop to avoid text overlapping */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between border-b border-slate-100 pb-3">
+        
+        {/* 💡 Added overflow-x-auto, max-w-full, and scrollbar-none so it swipes like a native mobile app app-tray */}
+        <div className="flex gap-1 bg-slate-100 p-1 rounded-xl max-w-full overflow-x-auto whitespace-nowrap no-scrollbar shrink-0">
           <button
             onClick={() => onDatasetChange("neo")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer inline-block ${
               activeDataset === "neo" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -233,7 +235,7 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
           </button>
           <button
             onClick={() => onDatasetChange("mars-weather")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer inline-block ${
               activeDataset === "mars-weather" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -241,7 +243,7 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
           </button>
           <button
             onClick={() => onDatasetChange("apod")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer inline-block ${
               activeDataset === "apod" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -249,14 +251,16 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
           </button>
           <button
             onClick={() => onDatasetChange("donki-flr")}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer inline-block ${
               activeDataset === "donki-flr" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
             }`}
           >
             Solar Flares (DONKI)
           </button>
         </div>
-        <span className="text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+
+        {/* 💡 Source feed pill aligns to left on mobile and sits elegantly to the right on desktop */}
+        <span className="text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100 w-fit self-start lg:self-auto">
           Source Feed: <span className="font-bold text-slate-700 uppercase">
             {activeDataset === "neo" && "NEO_ARRAY"}
             {activeDataset === "mars-weather" && "INSIGHT_SOL_ARRAY"}
