@@ -23,8 +23,8 @@ export function AppSidebar({ activeTab, onSelect }: Props) {
   const { open } = useSidebar();
 
   return (
-    <Sidebar 
-      collapsible="icon" 
+    <Sidebar
+      collapsible="icon"
       className="fixed inset-y-0 left-0 h-screen bg-[#0b1329] text-slate-200 flex flex-col border-r border-slate-800/60 z-50 transition-all duration-300 ease-in-out"
     >
       {/* Strictly Stationary Logo Header */}
@@ -58,13 +58,17 @@ export function AppSidebar({ activeTab, onSelect }: Props) {
                   onClick={() => onSelect(item.id)}
                   title={!open ? item.label : undefined}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-                    IsActive 
-                      ? "bg-sky-500/15 text-sky-400 border border-sky-500/20 shadow-sm" 
+                    IsActive
+                      ? "bg-sky-500/15 text-sky-400 border border-sky-500/20 shadow-sm"
                       : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent"
                   }`}
                 >
-                  <item.icon className={`h-4 w-4 shrink-0 ${IsActive ? "text-sky-400" : "text-slate-400"}`} />
-                  {open && <span className="truncate transition-opacity duration-200">{item.label}</span>}
+                  <item.icon
+                    className={`h-4 w-4 shrink-0 ${IsActive ? "text-sky-400" : "text-slate-400"}`}
+                  />
+                  {open && (
+                    <span className="truncate transition-opacity duration-200">{item.label}</span>
+                  )}
                 </button>
               );
             })}
@@ -81,7 +85,11 @@ export function AppSidebar({ activeTab, onSelect }: Props) {
         )}
         <div className="flex items-center gap-2 px-1 text-xs text-slate-400">
           <Radio className="h-3.5 w-3.5 text-emerald-500 animate-pulse shrink-0" />
-          {open && <span className="font-medium truncate transition-opacity duration-200">Telemetry online</span>}
+          {open && (
+            <span className="font-medium truncate transition-opacity duration-200">
+              Telemetry online
+            </span>
+          )}
         </div>
       </div>
     </Sidebar>

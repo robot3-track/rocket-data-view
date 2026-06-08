@@ -7,6 +7,7 @@ A high-fidelity, real-time telemetry dashboard designed to centralize, parse, an
 ## 🚀 Core Features
 
 ### 🌌 Multi-Stream Data Ingestion
+
 Dynamic, context-aware data routing across four distinct NASA APIs:
 
 - ☄️ Near-Earth Object (NEO) Tracking
@@ -17,6 +18,7 @@ Dynamic, context-aware data routing across four distinct NASA APIs:
 The dashboard enables seamless source switching while maintaining a consistent telemetry visualization experience.
 
 ### 🚨 Automated Anomaly Audit
+
 An integrated parsing matrix continuously scans incoming datasets to:
 
 - Flag potentially hazardous asteroids
@@ -26,6 +28,7 @@ An integrated parsing matrix continuously scans incoming datasets to:
 - Isolate critical anomalies for rapid review
 
 ### 🔄 Predictive Failover Subsystems
+
 Built-in telemetry simulation layers provide fallback data streams when live sources are unavailable.
 
 Features include:
@@ -37,6 +40,7 @@ Features include:
 - Uninterrupted timeline visualizations
 
 ### 📱 Fluid Layout Architecture
+
 A fully responsive interface built around modern navigation and adaptive layouts.
 
 Capabilities include:
@@ -51,14 +55,15 @@ Capabilities include:
 
 ## 🛠️ Tech Stack
 
-| Category | Technology |
-|-----------|------------|
-| **Framework** | React + TypeScript |
-| **Styling** | Tailwind CSS |
-| **Component Library** | shadcn/ui |
-| **Icons** | Lucide React |
+| Category              | Technology         |
+| --------------------- | ------------------ |
+| **Framework**         | React + TypeScript |
+| **Styling**           | Tailwind CSS       |
+| **Component Library** | shadcn/ui          |
+| **Icons**             | Lucide React       |
 
 ### Framework
+
 **React with TypeScript**
 
 Provides:
@@ -69,6 +74,7 @@ Provides:
 - Strong API contract validation
 
 ### Styling
+
 **Tailwind CSS**
 
 Used for:
@@ -79,6 +85,7 @@ Used for:
 - Utility-first styling architecture
 
 ### Component Library
+
 **shadcn/ui**
 
 Key implementations include:
@@ -89,6 +96,7 @@ Key implementations include:
 - Modular UI composition
 
 ### Icons
+
 **Lucide React**
 
 Provides lightweight, scalable SVG icons optimized for telemetry dashboards and mission-control interfaces.
@@ -165,15 +173,19 @@ or the URL displayed in your terminal.
 ## 🧩 Data Sources
 
 ### ☄️ Near-Earth Object Web Service (NeoWs)
+
 Tracks asteroid approaches and identifies potentially hazardous objects.
 
 ### 🔴 Mars InSight Weather Service
+
 Provides atmospheric and environmental telemetry from the Mars InSight mission archive.
 
 ### 🌠 Astronomy Picture of the Day (APOD)
+
 Retrieves daily NASA imagery and associated scientific metadata.
 
 ### ⚡ DONKI Space Weather Database
+
 Monitors:
 
 - Solar flares

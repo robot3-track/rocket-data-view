@@ -1,11 +1,31 @@
 import * as React from "react";
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { Activity, AlertTriangle, Database, HeartPulse, Sun, Loader2, BookOpen, HelpCircle, ShieldAlert, Zap, Thermometer, Settings } from "lucide-react";
+import {
+  Activity,
+  AlertTriangle,
+  Database,
+  HeartPulse,
+  Sun,
+  Loader2,
+  BookOpen,
+  HelpCircle,
+  ShieldAlert,
+  Zap,
+  Thermometer,
+  Settings,
+} from "lucide-react";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Toaster } from "@/components/ui/sonner";
 import { AppSidebar } from "@/components/workspace/AppSidebar";
 import { KpiCard } from "@/components/workspace/KpiCard";
@@ -53,7 +73,9 @@ export default function App() {
     } catch (err) {
       if (abortSignal && !abortSignal.active) return;
       setResult(null);
-      setError(err instanceof Error ? err.message : "An unexpected error occurred fetching telemetry.");
+      setError(
+        err instanceof Error ? err.message : "An unexpected error occurred fetching telemetry.",
+      );
     } finally {
       if (!abortSignal || abortSignal.active) {
         setLoading(false);
@@ -73,24 +95,23 @@ export default function App() {
     <SidebarProvider>
       <Toaster />
       <div className="flex min-h-screen w-full bg-[#f8fafc] text-slate-900 font-sans antialiased">
-        
         {/* Custom sidebar wrapper to inject the Favicon image directly over the old brand block */}
         <div className="relative flex">
           <AppSidebar activeTab={tab} onSelect={setTab} />
           {/* Positional layer rendering Favicon.png natively into your top-left navigation frame */}
           <div className="absolute top-4 left-5 z-20 pointer-events-none flex items-center gap-3">
-            <img 
-              src="/Favicon.png" 
-              alt="NASA Brand Logo" 
+            <img
+              src="/Favicon.png"
+              alt="NASA Brand Logo"
               className="h-8 w-8 object-contain rounded-lg shadow-sm"
               onError={(e) => {
                 // Graceful fallback code if asset path changes locally
-                e.currentTarget.style.display = 'none';
+                e.currentTarget.style.display = "none";
               }}
             />
           </div>
         </div>
-        
+
         <SidebarInset className="flex flex-col bg-transparent min-w-0 overflow-x-hidden">
           {/* Approachable Sticky Header with responsive padding adjustments */}
           <header className="sticky top-0 z-40 flex min-h-16 h-auto py-2 sm:py-0 items-center gap-4 border-b border-slate-200/60 bg-white/80 px-4 sm:px-6 backdrop-blur-md shrink-0">
@@ -112,7 +133,10 @@ export default function App() {
                   )}
                 </p>
               </div>
-              <Badge variant="secondary" className="font-medium text-xs tracking-normal px-3 py-1 rounded-full bg-slate-100 text-slate-600 border-none">
+              <Badge
+                variant="secondary"
+                className="font-medium text-xs tracking-normal px-3 py-1 rounded-full bg-slate-100 text-slate-600 border-none"
+              >
                 {HAS_NASA_KEY ? "Live network" : "Demo environment"}
               </Badge>
             </div>
@@ -124,18 +148,18 @@ export default function App() {
             {error && <TelemetryFailureAlert message={error} />}
 
             {tab === "overview" && (
-              <OverviewTab 
-                result={result} 
-                datasetLabel={datasetLabel} 
-                anomalies={anomalies} 
-                loading={loading} 
+              <OverviewTab
+                result={result}
+                datasetLabel={datasetLabel}
+                anomalies={anomalies}
+                loading={loading}
                 activeDataset={dataset}
                 onDatasetChange={setDataset}
               />
             )}
 
             {tab === "ingestion" && (
-              <IngestionTab 
+              <IngestionTab
                 dataset={dataset}
                 result={result}
                 datasetLabel={datasetLabel}
@@ -217,18 +241,31 @@ function GlobalMetricsPanel({ result, datasetLabel }: MetricsPanelProps) {
   );
 }
 
-function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange, activeDataset }: MetricsPanelProps & { anomalies: DataPoint[], loading: boolean, activeDataset: any, onDatasetChange: (val: any) => void }) {
+function OverviewTab({
+  result,
+  datasetLabel,
+  anomalies,
+  loading,
+  onDatasetChange,
+  activeDataset,
+}: MetricsPanelProps & {
+  anomalies: DataPoint[];
+  loading: boolean;
+  activeDataset: any;
+  onDatasetChange: (val: any) => void;
+}) {
   return (
     <div className="space-y-6">
       {/* 💡 Changed to flex-col on mobile and flex-row on desktop to avoid text overlapping */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between border-b border-slate-100 pb-3">
-        
         {/* 💡 Added overflow-x-auto, max-w-full, and scrollbar-none so it swipes like a native mobile app app-tray */}
         <div className="flex gap-1 bg-slate-100 p-1 rounded-xl max-w-full overflow-x-auto whitespace-nowrap no-scrollbar shrink-0">
           <button
             onClick={() => onDatasetChange("neo")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer inline-block ${
-              activeDataset === "neo" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              activeDataset === "neo"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-500 hover:text-slate-800"
             }`}
           >
             NEO Asteroids
@@ -236,7 +273,9 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
           <button
             onClick={() => onDatasetChange("mars-weather")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer inline-block ${
-              activeDataset === "mars-weather" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              activeDataset === "mars-weather"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-500 hover:text-slate-800"
             }`}
           >
             Mars Weather (InSight)
@@ -244,7 +283,9 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
           <button
             onClick={() => onDatasetChange("apod")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer inline-block ${
-              activeDataset === "apod" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              activeDataset === "apod"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-500 hover:text-slate-800"
             }`}
           >
             Astronomy Picture of the Day
@@ -252,7 +293,9 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
           <button
             onClick={() => onDatasetChange("donki-flr")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer inline-block ${
-              activeDataset === "donki-flr" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"
+              activeDataset === "donki-flr"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-500 hover:text-slate-800"
             }`}
           >
             Solar Flares (DONKI)
@@ -261,7 +304,8 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
 
         {/* 💡 Source feed pill aligns to left on mobile and sits elegantly to the right on desktop */}
         <span className="text-[11px] font-medium text-slate-400 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100 w-fit self-start lg:self-auto">
-          Source Feed: <span className="font-bold text-slate-700 uppercase">
+          Source Feed:{" "}
+          <span className="font-bold text-slate-700 uppercase">
             {activeDataset === "neo" && "NEO_ARRAY"}
             {activeDataset === "mars-weather" && "INSIGHT_SOL_ARRAY"}
             {activeDataset === "apod" && "APOD_METADATA"}
@@ -271,13 +315,15 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
       </div>
 
       <GlobalMetricsPanel result={result} datasetLabel={datasetLabel} />
-      
+
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card className="border-slate-200/80 bg-white rounded-2xl shadow-sm lg:col-span-2">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-base font-semibold tracking-tight text-slate-900">Activity metric index — {datasetLabel}</CardTitle>
+                <CardTitle className="text-base font-semibold tracking-tight text-slate-900">
+                  Activity metric index — {datasetLabel}
+                </CardTitle>
                 <p className="text-xs text-slate-500">Continuous interval data stream visualizer</p>
               </div>
               <Activity className="h-4 w-4 text-slate-400" />
@@ -292,7 +338,9 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-base font-semibold tracking-tight text-slate-900">Flagged data anomalies</CardTitle>
+                <CardTitle className="text-base font-semibold tracking-tight text-slate-900">
+                  Flagged data anomalies
+                </CardTitle>
                 <p className="text-xs text-slate-500">Outliers exceeding baseline parameters</p>
               </div>
               <ShieldAlert className="h-4 w-4 text-slate-400" />
@@ -305,13 +353,18 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
                 className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/60 px-4 py-3 text-xs transition-colors hover:bg-slate-50"
               >
                 <span className="font-medium truncate pr-4 text-slate-700">{a.label}</span>
-                <Badge variant="outline" className="shrink-0 font-medium rounded-full bg-red-50 text-red-700 border-red-200/50 px-2 py-0.5">
+                <Badge
+                  variant="outline"
+                  className="shrink-0 font-medium rounded-full bg-red-50 text-red-700 border-red-200/50 px-2 py-0.5"
+                >
                   {a.category}
                 </Badge>
               </div>
             ))}
             {anomalies.length === 0 && !loading && (
-              <p className="text-xs text-slate-400 py-6 text-center">No structural variations logged in this window.</p>
+              <p className="text-xs text-slate-400 py-6 text-center">
+                No structural variations logged in this window.
+              </p>
             )}
           </CardContent>
         </Card>
@@ -324,7 +377,14 @@ function OverviewTab({ result, datasetLabel, anomalies, loading, onDatasetChange
   );
 }
 
-function IngestionTab({ dataset, result, datasetLabel, loading, onDatasetChange, onForceReload }: IngestionTabProps) {
+function IngestionTab({
+  dataset,
+  result,
+  datasetLabel,
+  loading,
+  onDatasetChange,
+  onForceReload,
+}: IngestionTabProps) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 items-start">
@@ -347,8 +407,14 @@ function IngestionTab({ dataset, result, datasetLabel, loading, onDatasetChange,
   );
 }
 
-function AnomaliesTab({ result, datasetLabel, anomalies }: MetricsPanelProps & { anomalies: any[] }) {
-  const criticalCount = anomalies.filter((p: any) => p.isAnomaly && Math.abs(p.value || 0) > 80).length;
+function AnomaliesTab({
+  result,
+  datasetLabel,
+  anomalies,
+}: MetricsPanelProps & { anomalies: any[] }) {
+  const criticalCount = anomalies.filter(
+    (p: any) => p.isAnomaly && Math.abs(p.value || 0) > 80,
+  ).length;
   const warningCount = anomalies.length - criticalCount;
 
   return (
@@ -357,7 +423,9 @@ function AnomaliesTab({ result, datasetLabel, anomalies }: MetricsPanelProps & {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         <div className="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm flex items-center justify-between">
           <div className="space-y-1">
-            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-tight block">Detected Vectors</span>
+            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-tight block">
+              Detected Vectors
+            </span>
             <span className="text-xl font-bold text-slate-900">{anomalies.length}</span>
           </div>
           <div className="p-2.5 rounded-xl bg-amber-50 text-amber-600">
@@ -367,7 +435,9 @@ function AnomaliesTab({ result, datasetLabel, anomalies }: MetricsPanelProps & {
 
         <div className="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm flex items-center justify-between">
           <div className="space-y-1">
-            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-tight block">Critical Triggers</span>
+            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-tight block">
+              Critical Triggers
+            </span>
             <span className="text-xl font-bold text-rose-600">{criticalCount}</span>
           </div>
           <div className="p-2.5 rounded-xl bg-rose-50 text-rose-600">
@@ -377,7 +447,9 @@ function AnomaliesTab({ result, datasetLabel, anomalies }: MetricsPanelProps & {
 
         <div className="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm flex items-center justify-between">
           <div className="space-y-1">
-            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-tight block">Warning Deviation Flags</span>
+            <span className="text-[11px] font-medium text-slate-400 uppercase tracking-tight block">
+              Warning Deviation Flags
+            </span>
             <span className="text-xl font-bold text-amber-600">{warningCount}</span>
           </div>
           <div className="p-2.5 rounded-xl bg-amber-50 text-amber-500">
@@ -404,7 +476,6 @@ function AnomaliesTab({ result, datasetLabel, anomalies }: MetricsPanelProps & {
   );
 }
 
-
 function SettingsTab() {
   return (
     <Card className="border-slate-200/80 bg-white rounded-2xl shadow-sm">
@@ -416,16 +487,29 @@ function SettingsTab() {
       <CardContent className="space-y-4 text-sm text-slate-600">
         <div className="flex items-center justify-between border-b pb-4 border-slate-100">
           <div>
-            <span className="font-medium block text-slate-800">NASA Open Data integration pipeline</span>
+            <span className="font-medium block text-slate-800">
+              NASA Open Data integration pipeline
+            </span>
             <span className="text-xs text-slate-400">Secure connection configuration status</span>
           </div>
-          <Badge className={HAS_NASA_KEY ? "bg-green-50 text-green-700 border-green-200 px-3 py-1 rounded-full" : "bg-slate-100 text-slate-600 border-slate-200 px-3 py-1 rounded-full"}>
+          <Badge
+            className={
+              HAS_NASA_KEY
+                ? "bg-green-50 text-green-700 border-green-200 px-3 py-1 rounded-full"
+                : "bg-slate-100 text-slate-600 border-slate-200 px-3 py-1 rounded-full"
+            }
+          >
             {HAS_NASA_KEY ? "Operational" : "Snapshot Mode"}
           </Badge>
         </div>
         <p className="text-slate-500 leading-relaxed text-xs">
-          The pipeline maps variables safely by evaluating your infrastructure parameters file configuration (<code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-800">VITE_NASA_API_KEY</code>). 
-          To provision keys across client nodes cleanly, apply environment modifications inside your central workspace control layer.
+          The pipeline maps variables safely by evaluating your infrastructure parameters file
+          configuration (
+          <code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-800">
+            VITE_NASA_API_KEY
+          </code>
+          ). To provision keys across client nodes cleanly, apply environment modifications inside
+          your central workspace control layer.
         </p>
       </CardContent>
     </Card>
@@ -446,23 +530,43 @@ function DocumentationTab() {
 
       <Tabs defaultValue="kpis" className="w-full">
         <TabsList className="inline-flex items-center bg-slate-100/80 p-1 rounded-xl mb-4">
-          <TabsTrigger value="kpis" className="text-xs font-medium px-4 py-1.5 rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm cursor-pointer transition-all">Core calculations</TabsTrigger>
-          <TabsTrigger value="datasets" className="text-xs font-medium px-4 py-1.5 rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm cursor-pointer transition-all">Dataset reference</TabsTrigger>
+          <TabsTrigger
+            value="kpis"
+            className="text-xs font-medium px-4 py-1.5 rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm cursor-pointer transition-all"
+          >
+            Core calculations
+          </TabsTrigger>
+          <TabsTrigger
+            value="datasets"
+            className="text-xs font-medium px-4 py-1.5 rounded-lg data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm cursor-pointer transition-all"
+          >
+            Dataset reference
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="kpis">
           <Card className="border-slate-200/80 bg-white rounded-2xl shadow-sm overflow-hidden">
             <CardHeader>
-              <CardTitle className="text-sm font-semibold text-slate-900">Performance Logic Rules</CardTitle>
-              <CardDescription className="text-xs text-slate-400">How data streams are indexed and categorized dynamically.</CardDescription>
+              <CardTitle className="text-sm font-semibold text-slate-900">
+                Performance Logic Rules
+              </CardTitle>
+              <CardDescription className="text-xs text-slate-400">
+                How data streams are indexed and categorized dynamically.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Table className="border border-slate-100 rounded-lg overflow-hidden">
                 <TableHeader className="bg-slate-50">
                   <TableRow className="border-b border-slate-100">
-                    <TableHead className="w-[180px] text-xs font-semibold text-slate-600">Metric block</TableHead>
-                    <TableHead className="text-xs font-semibold text-slate-600">Logic parameter description</TableHead>
-                    <TableHead className="w-[120px] text-xs font-semibold text-slate-600">Severity level</TableHead>
+                    <TableHead className="w-[180px] text-xs font-semibold text-slate-600">
+                      Metric block
+                    </TableHead>
+                    <TableHead className="text-xs font-semibold text-slate-600">
+                      Logic parameter description
+                    </TableHead>
+                    <TableHead className="w-[120px] text-xs font-semibold text-slate-600">
+                      Severity level
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -471,27 +575,52 @@ function DocumentationTab() {
                       <ShieldAlert className="h-3.5 w-3.5 text-red-500" /> Active flags
                     </TableCell>
                     <TableCell className="text-xs text-slate-500 leading-relaxed">
-                      Tracks safety indicators. In <span className="text-slate-800">NEO Asteroids</span>, it parses objects flagged dangerous. In space flares, it monitors high solar flux parameters.
+                      Tracks safety indicators. In{" "}
+                      <span className="text-slate-800">NEO Asteroids</span>, it parses objects
+                      flagged dangerous. In space flares, it monitors high solar flux parameters.
                     </TableCell>
-                    <TableCell><Badge className="bg-red-50 text-red-700 border-none rounded-full" variant="destructive">Urgent</Badge></TableCell>
+                    <TableCell>
+                      <Badge
+                        className="bg-red-50 text-red-700 border-none rounded-full"
+                        variant="destructive"
+                      >
+                        Urgent
+                      </Badge>
+                    </TableCell>
                   </TableRow>
                   <TableRow className="border-b border-slate-100 hover:bg-slate-50/50">
                     <TableCell className="font-medium flex items-center gap-1.5 text-slate-800 text-xs">
                       <HeartPulse className="h-3.5 w-3.5 text-green-500" /> Health index
                     </TableCell>
                     <TableCell className="text-xs text-slate-500 leading-relaxed">
-                      Calculates general system stability out of 100%. Hazards apply dynamic deductions cleanly down to established safety baselines.
+                      Calculates general system stability out of 100%. Hazards apply dynamic
+                      deductions cleanly down to established safety baselines.
                     </TableCell>
-                    <TableCell><Badge className="bg-slate-100 text-slate-700 border-none rounded-full" variant="outline">Variable</Badge></TableCell>
+                    <TableCell>
+                      <Badge
+                        className="bg-slate-100 text-slate-700 border-none rounded-full"
+                        variant="outline"
+                      >
+                        Variable
+                      </Badge>
+                    </TableCell>
                   </TableRow>
                   <TableRow className="hover:bg-slate-50/50">
                     <TableCell className="font-medium flex items-center gap-1.5 text-slate-800 text-xs">
                       <Zap className="h-3.5 w-3.5 text-amber-500" /> Solar status
                     </TableCell>
                     <TableCell className="text-xs text-slate-500 leading-relaxed">
-                      Evaluates current stellar weather fields tracked across baseline indexes ranging seamlessly between Quiet and Severe intervals.
+                      Evaluates current stellar weather fields tracked across baseline indexes
+                      ranging seamlessly between Quiet and Severe intervals.
                     </TableCell>
-                    <TableCell><Badge className="bg-amber-50 text-amber-700 border-none rounded-full" variant="secondary">Observation</Badge></TableCell>
+                    <TableCell>
+                      <Badge
+                        className="bg-amber-50 text-amber-700 border-none rounded-full"
+                        variant="secondary"
+                      >
+                        Observation
+                      </Badge>
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -510,7 +639,9 @@ function DocumentationTab() {
               <p>Monitors rolling asteroid orbital paths crossing daily local space grids.</p>
               <ul className="list-disc pl-4 space-y-1 text-xs text-slate-400">
                 <li>Logs maximum calculated diameters mapped accurately in raw meters.</li>
-                <li>Calculates intersection density thresholds to predict flight tracks cleanly.</li>
+                <li>
+                  Calculates intersection density thresholds to predict flight tracks cleanly.
+                </li>
               </ul>
             </CardContent>
           </Card>
@@ -539,9 +670,12 @@ function KeyMissingAlert() {
   return (
     <Alert className="border-amber-200 bg-amber-50 text-amber-900 rounded-xl shadow-sm animate-fade-in">
       <AlertTriangle className="h-4 w-4 text-amber-600" />
-      <AlertTitle className="text-xs font-semibold tracking-tight">Running in demo snapshot mode</AlertTitle>
+      <AlertTitle className="text-xs font-semibold tracking-tight">
+        Running in demo snapshot mode
+      </AlertTitle>
       <AlertDescription className="text-xs text-amber-700/90 mt-0.5">
-        Displaying standard localized cache data. To process real-time streams directly, apply your secret token variable inside your deployment architecture settings dashboard.
+        Displaying standard localized cache data. To process real-time streams directly, apply your
+        secret token variable inside your deployment architecture settings dashboard.
       </AlertDescription>
     </Alert>
   );
@@ -549,9 +683,14 @@ function KeyMissingAlert() {
 
 function TelemetryFailureAlert({ message }: { message: string }) {
   return (
-    <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-900 rounded-xl shadow-sm animate-fade-in">
+    <Alert
+      variant="destructive"
+      className="bg-red-50 border-red-200 text-red-900 rounded-xl shadow-sm animate-fade-in"
+    >
       <AlertTriangle className="h-4 w-4 text-red-600" />
-      <AlertTitle className="text-xs font-semibold tracking-tight">Connection anomaly detected</AlertTitle>
+      <AlertTitle className="text-xs font-semibold tracking-tight">
+        Connection anomaly detected
+      </AlertTitle>
       <AlertDescription className="text-xs text-red-700/90 mt-0.5">{message}</AlertDescription>
     </Alert>
   );

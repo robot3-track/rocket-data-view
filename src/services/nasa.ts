@@ -16,7 +16,11 @@ export interface DatasetOption {
 
 export const DATASETS: DatasetOption[] = [
   { id: "neo", label: "NEO Asteroids", description: "Near-Earth Objects from NeoWs feed" },
-  { id: "mars-weather", label: "Mars Weather (InSight)", description: "Latest sols from InSight lander" },
+  {
+    id: "mars-weather",
+    label: "Mars Weather (InSight)",
+    description: "Latest sols from InSight lander",
+  },
   { id: "apod", label: "Astronomy Picture of the Day", description: "Recent APOD entries" },
   { id: "donki-flr", label: "Solar Flares (DONKI)", description: "Recent solar flare events" },
 ];
@@ -28,7 +32,7 @@ export interface DataPoint {
   category: string;
   timestamp: string;
   anomaly: boolean;
-  url?: string;         // Safe optional property for image links
+  url?: string; // Safe optional property for image links
   explanation?: string; // Safe optional property for summary details
 }
 
@@ -58,14 +62,14 @@ async function getJSON(url: string) {
 async function fetchNEO(): Promise<AnalysisResult> {
   const end = new Date();
   const start = new Date(end.getTime() - 6 * 86400000);
-  
+
   const url = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${ymd(start)}&end_date=${ymd(end)}&api_key=${KEY}`;
-  
+
   const json = await getJSON(url);
   const byDate = json.near_earth_objects as Record<string, any[]>;
   const points: DataPoint[] = [];
   const series: { date: string; value: number }[] = [];
-  
+
   for (const date of Object.keys(byDate).sort()) {
     const list = byDate[date];
     series.push({ date, value: list.length });
@@ -101,12 +105,12 @@ async function fetchAPOD(): Promise<AnalysisResult> {
   const end = new Date();
   const start = new Date(end.getTime() - 9 * 86400000);
   const url = `https://api.nasa.gov/planetary/apod?start_date=${ymd(start)}&end_date=${ymd(end)}&api_key=${KEY}`;
-  
+
   try {
     const res = await getJSON(url);
     const arr = Array.isArray(res) ? res : [res];
     const sorted = [...arr].sort((a, b) => (a.date || "").localeCompare(b.date || ""));
-    
+
     const points: DataPoint[] = sorted.map((a, i) => {
       // Clean insecure mixed-content asset paths to satisfy deployment restrictions
       const cleanUrl = a.url?.replace("http://", "https://") || "";
@@ -147,14 +151,14 @@ async function fetchAPOD(): Promise<AnalysisResult> {
       points: [],
       series: Array.from({ length: 7 }).map((_, i) => ({
         date: ymd(new Date(Date.now() - i * 86400000)),
-        value: 0
+        value: 0,
       })),
       kpis: {
         activeAnomalies: 0,
         totalDataPoints: 0,
         systemHealth: 100,
-        solarActivity: "Service Offline"
-      }
+        solarActivity: "Service Offline",
+      },
     };
   }
 }
@@ -162,9 +166,9 @@ async function fetchAPOD(): Promise<AnalysisResult> {
 async function fetchDONKI(): Promise<AnalysisResult> {
   const end = new Date();
   const start = new Date(end.getTime() - 29 * 86400000);
-  
+
   const url = `https://api.nasa.gov/DONKI/FLR?startDate=${ymd(start)}&endDate=${ymd(end)}&api_key=${KEY}`;
-  
+
   const arr = (await getJSON(url)) as any[];
   const points: DataPoint[] = arr.map((f, i) => ({
     id: f.flrID ?? String(i),
@@ -176,7 +180,9 @@ async function fetchDONKI(): Promise<AnalysisResult> {
   }));
   const grouped: Record<string, number> = {};
   for (const p of points) grouped[p.timestamp] = (grouped[p.timestamp] || 0) + 1;
-  const series = Object.keys(grouped).sort().map((d) => ({ date: d, value: grouped[d] }));
+  const series = Object.keys(grouped)
+    .sort()
+    .map((d) => ({ date: d, value: grouped[d] }));
   const xCount = points.filter((p) => p.category === "X").length;
   const mCount = points.filter((p) => p.category === "M").length;
   return {
@@ -203,15 +209,15 @@ function classToValue(c?: string): number {
 
 async function fetchMars(): Promise<AnalysisResult> {
   const url = `https://api.nasa.gov/insight_weather/?api_key=${KEY}&feedtype=json&ver=1.0`;
-  
+
   try {
     const json = await getJSON(url);
     const sols: string[] = json.sol_keys ?? [];
-    
+
     if (sols.length === 0) {
       return getEmptyMarsFallback();
     }
-    
+
     const points: DataPoint[] = [];
     const series: { date: string; value: number }[] = [];
     for (const sol of sols) {
@@ -271,7 +277,7 @@ function getEmptyMarsFallback(): AnalysisResult {
   const points: DataPoint[] = [];
   const series: { date: string; value: number }[] = [];
   const now = new Date();
-  
+
   for (let i = 6; i >= 0; i--) {
     const d = new Date(now);
     d.setDate(now.getDate() - i);
@@ -296,7 +302,7 @@ function getEmptyMarsFallback(): AnalysisResult {
     points,
     series,
     kpis: {
-      activeAnomalies: points.filter(p => p.anomaly).length,
+      activeAnomalies: points.filter((p) => p.anomaly).length,
       totalDataPoints: points.length,
       systemHealth: 94,
       solarActivity: "Nominal Baseline",
@@ -325,7 +331,7 @@ export function toCSV(points: DataPoint[]): string {
         const v = String((p as any)[k] ?? "");
         return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
       })
-      .join(",")
+      .join(","),
   );
   return [header.join(","), ...rows].join("\n");
 }

@@ -26,32 +26,36 @@ export function IngestionPanel({ dataset, onDatasetChange, onAnalyze, loading }:
           NASA data pipeline source
         </CardTitle>
       </CardHeader>
-      
+
       {/* Changed container to a stacked flex layout to allow text descriptions and controls to breathe naturally */}
       <CardContent className="flex flex-col justify-between p-6 pt-0 gap-5 h-[calc(100%-60px)]">
         <div className="space-y-3">
-          <label className="text-xs font-medium text-slate-500 block">
-            Select target dataset
-          </label>
+          <label className="text-xs font-medium text-slate-500 block">Select target dataset</label>
           <Select value={dataset} onValueChange={(v) => onDatasetChange(v as DatasetId)}>
             <SelectTrigger className="w-full bg-slate-50/50 border-slate-200 text-slate-800 rounded-xl h-10 px-3 hover:bg-slate-50 transition-colors cursor-pointer focus:ring-1 focus:ring-sky-500/20">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-white border-slate-200/80 rounded-xl shadow-lg">
               {DATASETS.map((d) => (
-                <SelectItem key={d.id} value={d.id} className="text-sm text-slate-700 focus:bg-slate-50 focus:text-slate-900 rounded-lg py-2 cursor-pointer">
+                <SelectItem
+                  key={d.id}
+                  value={d.id}
+                  className="text-sm text-slate-700 focus:bg-slate-50 focus:text-slate-900 rounded-lg py-2 cursor-pointer"
+                >
                   {d.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          {meta && <p className="text-xs leading-relaxed text-slate-400 mt-1.5">{meta.description}</p>}
+          {meta && (
+            <p className="text-xs leading-relaxed text-slate-400 mt-1.5">{meta.description}</p>
+          )}
         </div>
 
         {/* Removed horizontal squeezing constraints; the action button now spans full-width at the bottom of the card block safely */}
-        <Button 
-          onClick={onAnalyze} 
-          disabled={loading} 
+        <Button
+          onClick={onAnalyze}
+          disabled={loading}
           className="w-full h-11 rounded-xl bg-slate-900 text-white font-medium text-sm hover:bg-slate-800 transition-all shadow-sm active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center cursor-pointer mt-auto"
         >
           {loading ? (

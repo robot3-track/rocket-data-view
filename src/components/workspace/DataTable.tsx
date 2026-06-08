@@ -44,16 +44,16 @@ export function DataTable({ points, datasetLabel }: Props) {
             Displaying {visible.length} of {points.length} matching entries
           </p>
         </div>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={handleDownload} 
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleDownload}
           disabled={points.length === 0}
           className="h-9 px-4 rounded-xl border-slate-200 text-slate-600 font-medium text-xs bg-white hover:bg-slate-50 transition-colors cursor-pointer shadow-none inline-flex items-center disabled:opacity-40"
         >
           <Download className="mr-2 h-3.5 w-3.5 text-slate-400" />
           Export dataset
-          </Button>
+        </Button>
       </CardHeader>
 
       <CardContent className="p-0 border-t border-slate-100">
@@ -62,14 +62,24 @@ export function DataTable({ points, datasetLabel }: Props) {
             {/* Sticky headers configured with premium, clean light accents */}
             <TableHeader className="sticky top-0 bg-slate-50/70 backdrop-blur z-10 border-b border-slate-100">
               <TableRow className="hover:bg-transparent border-b border-slate-100">
-                <TableHead className="h-10 text-xs font-semibold text-slate-500 pl-6">Label</TableHead>
-                <TableHead className="h-10 text-xs font-semibold text-slate-500">Category</TableHead>
-                <TableHead className="h-10 text-xs font-semibold text-slate-500 text-right">Metric score</TableHead>
-                <TableHead className="h-10 text-xs font-semibold text-slate-500">Timestamp</TableHead>
-                <TableHead className="h-10 text-xs font-semibold text-slate-500 pr-6">Status</TableHead>
+                <TableHead className="h-10 text-xs font-semibold text-slate-500 pl-6">
+                  Label
+                </TableHead>
+                <TableHead className="h-10 text-xs font-semibold text-slate-500">
+                  Category
+                </TableHead>
+                <TableHead className="h-10 text-xs font-semibold text-slate-500 text-right">
+                  Metric score
+                </TableHead>
+                <TableHead className="h-10 text-xs font-semibold text-slate-500">
+                  Timestamp
+                </TableHead>
+                <TableHead className="h-10 text-xs font-semibold text-slate-500 pr-6">
+                  Status
+                </TableHead>
               </TableRow>
             </TableHeader>
-            
+
             <TableBody>
               {visible.length === 0 ? (
                 <TableRow className="hover:bg-transparent">
@@ -79,7 +89,10 @@ export function DataTable({ points, datasetLabel }: Props) {
                 </TableRow>
               ) : (
                 visible.map((p) => (
-                  <TableRow key={p.id} className="border-b border-slate-100 hover:bg-slate-50/40 transition-colors">
+                  <TableRow
+                    key={p.id}
+                    className="border-b border-slate-100 hover:bg-slate-50/40 transition-colors"
+                  >
                     <TableCell className="max-w-[280px] truncate font-medium text-slate-800 py-3.5 pl-6 text-sm">
                       {p.label}
                     </TableCell>
@@ -91,11 +104,17 @@ export function DataTable({ points, datasetLabel }: Props) {
                     <TableCell className="py-3.5 pr-6">
                       {/* Human-centric rounded badges substituting clinical console flags */}
                       {p.anomaly ? (
-                        <Badge variant="outline" className="font-medium text-[11px] rounded-full bg-red-50 text-red-700 border-red-200/40 px-2.5 py-0.5">
+                        <Badge
+                          variant="outline"
+                          className="font-medium text-[11px] rounded-full bg-red-50 text-red-700 border-red-200/40 px-2.5 py-0.5"
+                        >
                           Anomaly flag
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="font-medium text-[11px] rounded-full bg-slate-50 text-slate-600 border-slate-200/50 px-2.5 py-0.5">
+                        <Badge
+                          variant="outline"
+                          className="font-medium text-[11px] rounded-full bg-slate-50 text-slate-600 border-slate-200/50 px-2.5 py-0.5"
+                        >
                           Nominal
                         </Badge>
                       )}
