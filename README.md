@@ -2,70 +2,263 @@
 
 A high-fidelity, real-time telemetry dashboard designed to centralize, parse, and visualize multi-stream data from diverse NASA API endpoints. This integrated mission control interface allows users to monitor planetary conditions, track near-Earth objects, and audit severe space weather anomalies from a single workspace.
 
+---
+
 ## 🚀 Core Features
 
-- **Multi-Stream Data Ingestion:** Dynamic, context-aware swapping across four distinct NASA APIs: Near-Earth Object (NEO) tracking, Mars InSight atmospheric data, Astronomy Picture of the Day (APOD) metadata, and Space Weather DONKI alerts.
-- **Automated Anomaly Audit:** An integrated parsing matrix that scans inbound datasets to instantly flag, count, and isolate critical threats—such as potentially hazardous asteroids or extreme M/X-class solar flare events.
-- **Predictive Failover Subsystems:** Built-in telemetry simulation fallbacks for historical or offline data arrays (such as the concluded Mars InSight mission parameters) to ensure continuous chart rendering and unbroken timeline data.
-- **Fluid Layout Architecture:** A fully responsive user interface utilizing shadcn/ui navigation structures and dynamic grid column allocation, allowing smooth tracking across standard desktop workstations down to mobile touch viewports.
+### 🌌 Multi-Stream Data Ingestion
+Dynamic, context-aware data routing across four distinct NASA APIs:
+
+- ☄️ Near-Earth Object (NEO) Tracking
+- 🔴 Mars InSight Atmospheric Data
+- 🌠 Astronomy Picture of the Day (APOD) Metadata
+- ⚡ Space Weather DONKI Alerts
+
+The dashboard enables seamless source switching while maintaining a consistent telemetry visualization experience.
+
+### 🚨 Automated Anomaly Audit
+An integrated parsing matrix continuously scans incoming datasets to:
+
+- Flag potentially hazardous asteroids
+- Detect severe solar weather events
+- Identify M-Class and X-Class flare activity
+- Count and categorize threat-level incidents
+- Isolate critical anomalies for rapid review
+
+### 🔄 Predictive Failover Subsystems
+Built-in telemetry simulation layers provide fallback data streams when live sources are unavailable.
+
+Features include:
+
+- Historical mission data replay
+- Offline telemetry emulation
+- Mars InSight mission parameter reconstruction
+- Continuous chart rendering during API outages
+- Uninterrupted timeline visualizations
+
+### 📱 Fluid Layout Architecture
+A fully responsive interface built around modern navigation and adaptive layouts.
+
+Capabilities include:
+
+- Dynamic grid column allocation
+- Responsive telemetry panels
+- Mobile-first viewport scaling
+- shadcn/ui navigation structures
+- Seamless desktop-to-mobile transitions
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Framework:** React with TypeScript (for type-safe data modeling and structured telemetry structures)
-- **Styling:** Tailwind CSS (built with fluid layout padding and responsive grid profiles)
-- **Component Library:** shadcn/ui (leveraging `<SidebarProvider>` and native layout transition hooks)
-- **Icons:** Lucide React
+| Category | Technology |
+|-----------|------------|
+| **Framework** | React + TypeScript |
+| **Styling** | Tailwind CSS |
+| **Component Library** | shadcn/ui |
+| **Icons** | Lucide React |
+
+### Framework
+**React with TypeScript**
+
+Provides:
+
+- Type-safe data modeling
+- Structured telemetry schemas
+- Predictable state management
+- Strong API contract validation
+
+### Styling
+**Tailwind CSS**
+
+Used for:
+
+- Fluid spacing systems
+- Responsive grid layouts
+- Adaptive viewport behavior
+- Utility-first styling architecture
+
+### Component Library
+**shadcn/ui**
+
+Key implementations include:
+
+- `<SidebarProvider>`
+- Responsive navigation patterns
+- Layout transition hooks
+- Modular UI composition
+
+### Icons
+**Lucide React**
+
+Provides lightweight, scalable SVG icons optimized for telemetry dashboards and mission-control interfaces.
 
 ---
 
 ## ⚙️ Getting Started
 
 ### Prerequisites
-Make sure you have [Node.js](https://nodejs.org/) and a package manager like `npm` or `bun` installed.
 
-### Installation
+Ensure the following tools are installed:
 
-1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/robot3-track/robot-data-view.git](https://github.com/robot3-track/robot-data-view.git)
-   cd robot-data-view
-Install dependencies:
+- [Node.js](https://nodejs.org/)
+- npm (included with Node.js) or Bun
 
-Bash
+Verify installation:
+
+```bash
+node -v
+npm -v
+```
+
+---
+
+## 📦 Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/robot3-track/robot-data-view.git
+cd robot-data-view
+```
+
+### 2. Install Dependencies
+
+Using npm:
+
+```bash
 npm install
-# or if you are using bun:
+```
+
+Or using Bun:
+
+```bash
 bun install
-Set up Environment Variables:
-Create a .env file in the root directory and add your NASA API key (you can generate one at api.nasa.gov):
+```
 
-Code snippet
-VITE_NASA_API_KEY=your_nasa_api_key_here
-Run the development server:
+### 3. Start the Development Server
 
-Bash
+Using npm:
+
+```bash
 npm run dev
-# or:
-bun dev
-Open your browser to http://localhost:5173 to view your workspace.
+```
 
-📈 Engineering Log & Optimization Fixes
-Building the workspace required solving several critical data binding and frontend layout bugs:
+Or using Bun:
 
-1. Data Hydration Syncing
-Issue: Changing frontend UI sub-tabs caused charts to go blank because state keys didn't map cleanly to the underlying API keys.
+```bash
+bun run dev
+```
 
-Fix: Overhauled nasa.ts to implement strict key-value pairings for all datasets (neo, mars-weather, etc.) so context loads asynchronously with zero delay.
+### 4. Open the Application
 
-2. Collapsible Sidebar Layout Freeze
-Issue: The workspace layout would get jammed halfway when clicking the hamburger toggle, leaving a blank artifact block on screen.
+Navigate to:
 
-Fix: Removed hardcoded layout widths from the wrapper component and migrated the state management completely to shadcn's native useSidebar() context hooks.
+```text
+http://localhost:5173
+```
 
-3. Mobile Fluid Grid Overhaul
-Issue: Text labels overlapped, charts clipped, and elements broke entirely on touch resolutions.
+or the URL displayed in your terminal.
 
-Fix: Implemented a horizontally scrollable navigation app-tray for mobile selectors, forced metrics cards to wrap cleanly, and added adaptive padding layout adjustments along the main content canvas flow.
+---
 
-Mission Status: Production build validated. Telemetry online. 🛰️
+## 🧩 Data Sources
+
+### ☄️ Near-Earth Object Web Service (NeoWs)
+Tracks asteroid approaches and identifies potentially hazardous objects.
+
+### 🔴 Mars InSight Weather Service
+Provides atmospheric and environmental telemetry from the Mars InSight mission archive.
+
+### 🌠 Astronomy Picture of the Day (APOD)
+Retrieves daily NASA imagery and associated scientific metadata.
+
+### ⚡ DONKI Space Weather Database
+Monitors:
+
+- Solar flares
+- Coronal mass ejections (CMEs)
+- Geomagnetic storms
+- High-energy particle events
+
+---
+
+## 📊 Telemetry Monitoring Capabilities
+
+The workspace supports:
+
+- Real-time event visualization
+- Threat classification matrices
+- Historical timeline analysis
+- Space weather anomaly tracking
+- Planetary environmental monitoring
+- Multi-source telemetry aggregation
+- Interactive dashboard filtering
+
+---
+
+## 🏗️ Architecture Overview
+
+```text
+┌────────────────────────────────────┐
+│        NASA Mission Workspace       │
+└────────────────────────────────────┘
+                 │
+                 ▼
+┌────────────────────────────────────┐
+│      Telemetry Aggregation Layer    │
+└────────────────────────────────────┘
+                 │
+      ┌──────────┼──────────┐
+      ▼          ▼          ▼
+  NEO API    APOD API   DONKI API
+      │
+      ▼
+ Mars InSight Data
+      │
+      ▼
+┌────────────────────────────────────┐
+│      Anomaly Detection Engine       │
+└────────────────────────────────────┘
+                 │
+                 ▼
+┌────────────────────────────────────┐
+│    Responsive Visualization Layer   │
+└────────────────────────────────────┘
+```
+
+---
+
+## 🎯 Use Cases
+
+- Mission operations monitoring
+- Space weather surveillance
+- Asteroid threat assessment
+- Educational astronomy dashboards
+- NASA data visualization projects
+- Scientific telemetry exploration
+- Public-facing mission analytics portals
+
+---
+
+## 🔮 Future Enhancements
+
+- Live WebSocket telemetry ingestion
+- Advanced predictive analytics
+- AI-assisted anomaly classification
+- Mission event playback controls
+- Custom telemetry alert thresholds
+- Exportable mission reports
+- Extended NASA API integrations
+
+---
+
+## 📄 License
+
+This project is distributed under the terms of the MIT License.
+
+---
+
+## 👨‍🚀 Mission Statement
+
+Deliver a unified mission-control experience that transforms distributed NASA datasets into actionable telemetry intelligence through responsive visualization, anomaly detection, and resilient data-stream architecture.
