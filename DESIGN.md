@@ -12,5 +12,7 @@ rounded:
   md: "14px"
   xl: "20px"
 ---
+
 ## Visual Hierarchy
+
 Cards must sit cleanly on top of the light slate canvas background using subtle drop shadows rather than dark, heavy fills. This ensures high context readability without cognitive overload.
