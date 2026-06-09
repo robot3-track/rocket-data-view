@@ -1,4 +1,5 @@
-![Workspace Image](/rocket-data-view/Nebula Insights (1).png)
+![Workspace Image](/rocket-data-view/Nebula%20Insights%20(1).png)
+
 # 🛰️ NASA Mission Analytics Workspace
 
 A high-fidelity, real-time telemetry dashboard designed to centralize, parse, and visualize multi-stream data from diverse NASA API endpoints. This integrated mission control interface allows users to monitor planetary conditions, track near-Earth objects, and audit severe space weather anomalies from a single workspace.
