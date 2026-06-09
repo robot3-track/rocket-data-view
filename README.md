@@ -1,4 +1,4 @@
-![Workspace Image](/rocket-data-view/Nebula%20Insights%20(1).png)
+![Workspace Image](./Nebula%20Insights%20(1).png)
 
 # 🛰️ NASA Mission Analytics Workspace
 
