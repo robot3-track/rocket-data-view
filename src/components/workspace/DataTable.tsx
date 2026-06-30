@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,14 +34,13 @@ export function DataTable({ points, datasetLabel }: Props) {
   };
 
   return (
-    <Card className="border-slate-200/80 bg-white rounded-2xl shadow-sm overflow-hidden">
+    <Card className="border-border bg-card shadow-sm overflow-hidden rounded-[var(--radius)]">
       <CardHeader className="flex flex-row items-center justify-between gap-4 p-6 pb-4">
         <div>
-          {/* Shifted text formats to match clean, warm editorial standards */}
-          <CardTitle className="text-base font-semibold tracking-tight text-slate-900">
+          <CardTitle className="text-base font-semibold tracking-tight text-foreground">
             Telemetry record stream
           </CardTitle>
-          <p className="text-xs text-slate-400 font-normal mt-0.5">
+          <p className="text-xs text-muted-foreground font-normal mt-0.5">
             Displaying {visible.length} of {points.length} matching entries
           </p>
         </div>
@@ -49,32 +49,31 @@ export function DataTable({ points, datasetLabel }: Props) {
           size="sm"
           onClick={handleDownload}
           disabled={points.length === 0}
-          className="h-9 px-4 rounded-xl border-slate-200 text-slate-600 font-medium text-xs bg-white hover:bg-slate-50 transition-colors cursor-pointer shadow-none inline-flex items-center disabled:opacity-40"
+          className="h-9 px-4 rounded-[var(--radius)] border-border text-foreground font-medium text-xs bg-card hover:bg-muted transition-colors cursor-pointer shadow-none inline-flex items-center disabled:opacity-40"
         >
-          <Download className="mr-2 h-3.5 w-3.5 text-slate-400" />
+          <Download className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
           Export dataset
         </Button>
       </CardHeader>
 
-      <CardContent className="p-0 border-t border-slate-100">
+      <CardContent className="p-0 border-t border-border">
         <div className="max-h-[440px] overflow-auto">
           <Table>
-            {/* Sticky headers configured with premium, clean light accents */}
-            <TableHeader className="sticky top-0 bg-slate-50/70 backdrop-blur z-10 border-b border-slate-100">
-              <TableRow className="hover:bg-transparent border-b border-slate-100">
-                <TableHead className="h-10 text-xs font-semibold text-slate-500 pl-6">
+            <TableHeader className="sticky top-0 bg-muted/90 backdrop-blur z-10 border-b border-border">
+              <TableRow className="hover:bg-transparent border-b border-border">
+                <TableHead className="h-10 text-xs font-semibold text-muted-foreground pl-6">
                   Label
                 </TableHead>
-                <TableHead className="h-10 text-xs font-semibold text-slate-500">
+                <TableHead className="h-10 text-xs font-semibold text-muted-foreground">
                   Category
                 </TableHead>
-                <TableHead className="h-10 text-xs font-semibold text-slate-500 text-right">
+                <TableHead className="h-10 text-xs font-semibold text-muted-foreground text-right">
                   Metric score
                 </TableHead>
-                <TableHead className="h-10 text-xs font-semibold text-slate-500">
+                <TableHead className="h-10 text-xs font-semibold text-muted-foreground">
                   Timestamp
                 </TableHead>
-                <TableHead className="h-10 text-xs font-semibold text-slate-500 pr-6">
+                <TableHead className="h-10 text-xs font-semibold text-muted-foreground pr-6">
                   Status
                 </TableHead>
               </TableRow>
@@ -83,7 +82,7 @@ export function DataTable({ points, datasetLabel }: Props) {
             <TableBody>
               {visible.length === 0 ? (
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={5} className="py-12 text-center text-xs text-slate-400">
+                  <TableCell colSpan={5} className="py-12 text-center text-xs text-muted-foreground">
                     No logs available yet. Process a dataset source above to load incoming entries.
                   </TableCell>
                 </TableRow>
@@ -91,29 +90,28 @@ export function DataTable({ points, datasetLabel }: Props) {
                 visible.map((p) => (
                   <TableRow
                     key={p.id}
-                    className="border-b border-slate-100 hover:bg-slate-50/40 transition-colors"
+                    className="border-b border-border hover:bg-muted/40 transition-colors"
                   >
-                    <TableCell className="max-w-[280px] truncate font-medium text-slate-800 py-3.5 pl-6 text-sm">
+                    <TableCell className="max-w-[280px] truncate font-medium text-foreground py-3.5 pl-6 text-sm">
                       {p.label}
                     </TableCell>
-                    <TableCell className="text-slate-500 text-xs py-3.5">{p.category}</TableCell>
-                    <TableCell className="text-right tabular-nums text-slate-900 font-medium py-3.5 text-sm">
+                    <TableCell className="text-muted-foreground text-xs py-3.5">{p.category}</TableCell>
+                    <TableCell className="text-right tabular-nums text-foreground font-medium py-3.5 text-sm">
                       {p.value.toLocaleString()}
                     </TableCell>
-                    <TableCell className="text-slate-400 text-xs py-3.5">{p.timestamp}</TableCell>
+                    <TableCell className="text-muted-foreground text-xs py-3.5">{p.timestamp}</TableCell>
                     <TableCell className="py-3.5 pr-6">
-                      {/* Human-centric rounded badges substituting clinical console flags */}
                       {p.anomaly ? (
                         <Badge
                           variant="outline"
-                          className="font-medium text-[11px] rounded-full bg-red-50 text-red-700 border-red-200/40 px-2.5 py-0.5"
+                          className="font-medium text-[11px] rounded-[var(--radius)] bg-destructive/10 text-destructive border-destructive/20 px-2.5 py-0.5"
                         >
                           Anomaly flag
                         </Badge>
                       ) : (
                         <Badge
                           variant="outline"
-                          className="font-medium text-[11px] rounded-full bg-slate-50 text-slate-600 border-slate-200/50 px-2.5 py-0.5"
+                          className="font-medium text-[11px] rounded-[var(--radius)] bg-muted text-muted-foreground border-border px-2.5 py-0.5"
                         >
                           Nominal
                         </Badge>
