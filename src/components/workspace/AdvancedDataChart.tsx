@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   ResponsiveContainer,
   XAxis,
@@ -22,7 +23,7 @@ interface AdvancedDataChartProps {
 export function AdvancedDataChart({ streams }: AdvancedDataChartProps) {
   if (!streams || streams.length === 0) {
     return (
-      <div className="w-full h-[320px] flex items-center justify-center text-xs text-slate-400">
+      <div className="w-full h-[320px] flex items-center justify-center text-xs text-muted-foreground border border-border bg-card">
         Awaiting active telemetry streams...
       </div>
     );
@@ -83,14 +84,21 @@ export function AdvancedDataChart({ streams }: AdvancedDataChartProps) {
   }
 
   return (
-    <div className="w-full h-[320px] bg-slate-50/50 p-2 rounded-xl border border-slate-100">
+    <div className="w-full h-[320px] bg-card p-2 border border-border">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={combinedDataset} margin={{ top: 15, right: 15, left: -20, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-          <XAxis dataKey="time" stroke="#94a3b8" fontSize={10} tickLine={false} />
+          {/* Grid lines set to your neutral structural border token */}
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+          
+          <XAxis 
+            dataKey="time" 
+            stroke="var(--color-muted-foreground)" 
+            fontSize={10} 
+            tickLine={false} 
+          />
           <YAxis
             yAxisId="left"
-            stroke="#0ea5e9"
+            stroke="var(--color-chart-1)"
             fontSize={10}
             tickLine={false}
             domain={["dataMin - 50", "dataMax + 50"]}
@@ -98,16 +106,17 @@ export function AdvancedDataChart({ streams }: AdvancedDataChartProps) {
           <YAxis
             yAxisId="right"
             orientation="right"
-            stroke="#f59e0b"
+            stroke="var(--color-chart-3)"
             fontSize={10}
             tickLine={false}
           />
 
           <Tooltip
             contentStyle={{
-              backgroundColor: "#fff",
-              borderRadius: "12px",
-              border: "1px solid #e2e8f0",
+              backgroundColor: "var(--color-card)",
+              borderRadius: "var(--radius)",
+              border: "1px solid var(--color-border)",
+              color: "var(--color-foreground)",
               fontSize: "11px",
             }}
             formatter={(value, name) => {
@@ -116,7 +125,7 @@ export function AdvancedDataChart({ streams }: AdvancedDataChartProps) {
               return [value, name.toString().replace("Pred", " (Forecasted)")];
             }}
           />
-          <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "10px" }} />
+          <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "10px", color: "var(--color-foreground)" }} />
 
           {/* Historical Series Lines (Solid) */}
           <Line
@@ -124,8 +133,8 @@ export function AdvancedDataChart({ streams }: AdvancedDataChartProps) {
             type="monotone"
             dataKey="windHist"
             name="Solar Wind Speed"
-            stroke="#0ea5e9"
-            strokeWidth={3}
+            stroke="var(--color-chart-1)"
+            strokeWidth={2}
             dot={false}
             activeDot={{ r: 4 }}
             connectNulls
@@ -135,8 +144,8 @@ export function AdvancedDataChart({ streams }: AdvancedDataChartProps) {
             type="monotone"
             dataKey="geoHist"
             name="Geomagnetic Index"
-            stroke="#f59e0b"
-            strokeWidth={3}
+            stroke="var(--color-chart-3)"
+            strokeWidth={2}
             dot={false}
             activeDot={{ r: 4 }}
             connectNulls
@@ -148,10 +157,10 @@ export function AdvancedDataChart({ streams }: AdvancedDataChartProps) {
             type="monotone"
             dataKey="windPred"
             name="Predicted Wind Speed"
-            stroke="#0ea5e9"
-            strokeWidth={2.5}
-            strokeDasharray="6 6"
-            dot={{ r: 3, fill: "#0ea5e9" }}
+            stroke="var(--color-chart-1)"
+            strokeWidth={1.5}
+            strokeDasharray="4 4"
+            dot={{ r: 2, fill: "var(--color-chart-1)" }}
             connectNulls
           />
           <Line
@@ -159,10 +168,10 @@ export function AdvancedDataChart({ streams }: AdvancedDataChartProps) {
             type="monotone"
             dataKey="geoPred"
             name="Predicted Kp Index"
-            stroke="#f59e0b"
-            strokeWidth={2.5}
-            strokeDasharray="6 6"
-            dot={{ r: 3, fill: "#f59e0b" }}
+            stroke="var(--color-chart-3)"
+            strokeWidth={1.5}
+            strokeDasharray="4 4"
+            dot={{ r: 2, fill: "var(--color-chart-3)" }}
             connectNulls
           />
         </LineChart>
