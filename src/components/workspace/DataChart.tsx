@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   Area,
   AreaChart,
@@ -19,7 +20,8 @@ export function DataChart({ data }: Props) {
         <AreaChart data={data} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--color-chart-1)" stopOpacity={0.45} />
+              {/* Opacity scaled slightly down for a cleaner architectural trace look */}
+              <stop offset="0%" stopColor="var(--color-chart-1)" stopOpacity={0.2} />
               <stop offset="100%" stopColor="var(--color-chart-1)" stopOpacity={0} />
             </linearGradient>
           </defs>
@@ -40,7 +42,7 @@ export function DataChart({ data }: Props) {
             contentStyle={{
               background: "var(--color-popover)",
               border: "1px solid var(--color-border)",
-              borderRadius: 8,
+              borderRadius: "var(--radius)", /* Tied directly to your crisp 0px edge constraint */
               color: "var(--color-popover-foreground)",
               fontSize: 12,
             }}
@@ -50,7 +52,7 @@ export function DataChart({ data }: Props) {
             type="monotone"
             dataKey="value"
             stroke="var(--color-chart-1)"
-            strokeWidth={2}
+            strokeWidth={1.5} /* Thinned out slightly to give it a schematic layout aesthetic */
             fill="url(#chartFill)"
           />
         </AreaChart>
