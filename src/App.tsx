@@ -9,7 +9,6 @@ import {
   Loader2,
   BookOpen,
   ShieldAlert,
-  Zap,
   Settings,
   ChevronRight,
   RefreshCw,
@@ -17,7 +16,6 @@ import {
 } from "lucide-react";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -551,7 +549,7 @@ function DocumentationTab() {
                       <span className="inline-block text-[10px] font-mono font-semibold bg-zinc-100 text-zinc-600 border border-zinc-200 rounded px-2 py-0.5">ROLLING_AVG</span>
                     </TableCell>
                   </TableRow>
-                </TableRow>
+                </TableBody>
               </Table>
             </CardContent>
           </Card>
