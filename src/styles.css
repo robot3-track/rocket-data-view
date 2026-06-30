@@ -46,42 +46,57 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  /* Dark NASA mission-control theme by default */
-  --background: oklch(0.16 0.02 260);
-  --foreground: oklch(0.96 0.01 260);
-  --card: oklch(0.21 0.025 260);
-  --card-foreground: oklch(0.96 0.01 260);
-  --popover: oklch(0.21 0.025 260);
-  --popover-foreground: oklch(0.96 0.01 260);
-  --primary: oklch(0.72 0.18 230);
-  --primary-foreground: oklch(0.15 0.02 260);
-  --secondary: oklch(0.28 0.03 260);
-  --secondary-foreground: oklch(0.96 0.01 260);
-  --muted: oklch(0.25 0.025 260);
-  --muted-foreground: oklch(0.68 0.02 260);
-  --accent: oklch(0.3 0.05 230);
-  --accent-foreground: oklch(0.96 0.01 260);
-  --destructive: oklch(0.65 0.22 25);
-  --destructive-foreground: oklch(0.98 0 0);
-  --success: oklch(0.72 0.17 155);
-  --warning: oklch(0.78 0.16 75);
-  --border: oklch(0.3 0.02 260);
-  --input: oklch(0.28 0.02 260);
-  --ring: oklch(0.72 0.18 230);
-  --chart-1: oklch(0.72 0.18 230);
-  --chart-2: oklch(0.72 0.17 155);
-  --chart-3: oklch(0.78 0.16 75);
-  --chart-4: oklch(0.65 0.22 25);
-  --chart-5: oklch(0.7 0.18 300);
-  --sidebar: oklch(0.18 0.02 260);
-  --sidebar-foreground: oklch(0.92 0.01 260);
-  --sidebar-primary: oklch(0.72 0.18 230);
-  --sidebar-primary-foreground: oklch(0.15 0.02 260);
-  --sidebar-accent: oklch(0.26 0.03 260);
-  --sidebar-accent-foreground: oklch(0.96 0.01 260);
-  --sidebar-border: oklch(0.28 0.02 260);
-  --sidebar-ring: oklch(0.72 0.18 230);
+  /* Flattened square geometry rule for structural engineering student look */
+  --radius: 0px;
+
+  /* Bright, high-contrast crisp Light Sandbox Theme */
+  --background: oklch(0.99 0.002 240);          /* Off-white canvas base */
+  --foreground: oklch(0.12 0.015 240);          /* Deep charcoal-slate text */
+  
+  --card: oklch(1.0 0 0);                        /* Pure crisp white cards */
+  --card-foreground: oklch(0.12 0.015 240);
+  
+  --popover: oklch(1.0 0 0);
+  --popover-foreground: oklch(0.12 0.015 240);
+  
+  --primary: oklch(0.25 0.02 240);              /* Strong minimal dark structural borders/accents */
+  --primary-foreground: oklch(0.99 0.002 240);
+  
+  --secondary: oklch(0.94 0.005 240);            /* Light gray hover blocks */
+  --secondary-foreground: oklch(0.12 0.015 240);
+  
+  --muted: oklch(0.94 0.005 240);                /* Inactive navigation tab foundations */
+  --muted-foreground: oklch(0.45 0.015 240);     /* Soft subtext strings */
+  
+  --accent: oklch(0.90 0.01 240);
+  --accent-foreground: oklch(0.12 0.015 240);
+  
+  --destructive: oklch(0.60 0.18 25);            /* Controlled warning alert lines */
+  --destructive-foreground: oklch(0.99 0 0);
+  
+  --success: oklch(0.55 0.14 145);
+  --warning: oklch(0.65 0.13 75);
+  
+  --border: oklch(0.88 0.008 240);               /* Thin, technical mechanical grid layout lines */
+  --input: oklch(0.88 0.008 240);
+  --ring: oklch(0.25 0.02 240);
+
+  /* Light data series charts variables */
+  --chart-1: oklch(0.35 0.02 240);
+  --chart-2: oklch(0.50 0.02 240);
+  --chart-3: oklch(0.65 0.02 240);
+  --chart-4: oklch(0.55 0.14 145);
+  --chart-5: oklch(0.60 0.18 25);
+
+  /* Sidebar Component Layout Adjustments */
+  --sidebar: oklch(0.97 0.004 240);
+  --sidebar-foreground: oklch(0.25 0.02 240);
+  --sidebar-primary: oklch(0.25 0.02 240);
+  --sidebar-primary-foreground: oklch(1.0 0 0);
+  --sidebar-accent: oklch(0.92 0.006 240);
+  --sidebar-accent-foreground: oklch(0.12 0.015 240);
+  --sidebar-border: oklch(0.88 0.008 240);
+  --sidebar-ring: oklch(0.25 0.02 240);
 }
 
 @layer base {
