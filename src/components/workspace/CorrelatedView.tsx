@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useState, useEffect } from "react";
 import {
   Activity,
@@ -6,7 +7,6 @@ import {
   Orbit,
   RefreshCw,
   BarChart2,
-  Clock,
   BrainCircuit,
   Sparkles,
   TrendingUp,
@@ -37,7 +37,6 @@ export function CorrelatedView() {
     try {
       const data = await fetchSpaceWeatherCorrelation();
 
-      // Wire up local dataset mappings to fit into your existing rendering engines cleanly
       if (data && data.streams) {
         let transformed = [...data.streams];
 
@@ -109,12 +108,10 @@ export function CorrelatedView() {
     }
   };
 
-  // Automatically refresh telemetry datasets when user selects a different drop down choice
   useEffect(() => {
     triggerSync();
   }, [selectedDataset]);
 
-  // Compute metrics and predictions safely to avoid raw string errors
   const highestWindPoint = streams.reduce((max, s) => {
     const numMatch = s.metric ? s.metric.match(/\d+/) : null;
     const val = numMatch ? parseInt(numMatch[0], 10) : Math.round(450 + s.deviation * 80);
@@ -133,20 +130,19 @@ export function CorrelatedView() {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Upper Control Panel Header Section with Dropdown Selection Component */}
-      <div className="p-6 bg-white rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6">
+      {/* Upper Control Panel Header Section */}
+      <div className="p-6 bg-card border border-border shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
-          <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
             <Orbit
-              className="h-4 w-4 text-sky-500 animate-spin"
+              className="h-4 w-4 text-primary animate-spin"
               style={{ animationDuration: "6s" }}
             />
             NASA Pipeline Source Ingestion
           </h3>
-          <p className="text-xs text-slate-500">
-            Select an active real-time dataset stream to update multi-axis charts and diagnostic
-            models.
+          <p className="text-xs text-muted-foreground">
+            Select an active real-time dataset stream to update multi-axis charts and diagnostic models.
           </p>
         </div>
 
@@ -154,7 +150,7 @@ export function CorrelatedView() {
           <select
             value={selectedDataset}
             onChange={(e) => setSelectedDataset(e.target.value as DatasetType)}
-            className="text-xs font-semibold border border-slate-200 rounded-xl px-3 py-2.5 bg-slate-50 text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer min-w-[210px] shadow-sm"
+            className="text-xs font-semibold border border-border px-3 py-2.5 bg-muted text-foreground focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer min-w-[210px] shadow-sm"
           >
             <option value="neo">NEO Asteroids</option>
             <option value="mars">Mars Weather (InSight)</option>
@@ -165,7 +161,7 @@ export function CorrelatedView() {
           <button
             onClick={triggerSync}
             disabled={isSyncing}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer shadow-sm"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? "animate-spin" : ""}`} />
             {isSyncing ? "Syncing..." : "Query Live Sensors"}
@@ -174,45 +170,43 @@ export function CorrelatedView() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        <div className="lg:col-span-2 p-6 bg-white rounded-2xl border border-slate-200/80 shadow-sm space-y-5">
+        <div className="lg:col-span-2 p-6 bg-card border border-border shadow-sm space-y-5">
           <div>
-            <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-sky-500" /> Multi-Axis Correlation Matrix &
-              Predictive Timeline
+            <span className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-primary" /> Multi-Axis Correlation Matrix & Predictive Timeline
             </span>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Solid lines indicate past sensor data. Dashed segments chart regression-modeled
-              predictive horizons.
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Solid lines indicate past sensor data. Dashed segments chart regression-modeled predictive horizons.
             </p>
           </div>
 
           <AdvancedDataChart streams={streams} />
 
-          <div className="overflow-x-auto border border-slate-100 rounded-xl mt-4">
+          <div className="overflow-x-auto border border-border mt-4">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-slate-50/70 border-b border-slate-100 text-slate-400 font-medium">
+                <tr className="bg-muted border-b border-border text-muted-foreground font-medium">
                   <th className="p-3">Vector ID</th>
                   <th className="p-3">Platform Stream Source</th>
                   <th className="p-3">Evaluated Parameter</th>
                   <th className="p-3 text-right">Sigma Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-50">
+              <tbody className="divide-y divide-border">
                 {!isSyncing &&
                   streams.map((stream) => (
-                    <tr key={stream.id} className="hover:bg-slate-50/40 transition-colors">
-                      <td className="p-3 font-mono font-semibold text-slate-700">{stream.id}</td>
-                      <td className="p-3 font-medium text-slate-900">{stream.source}</td>
-                      <td className="p-3 text-slate-500">{stream.metric}</td>
+                    <tr key={stream.id} className="hover:bg-muted/50 transition-colors">
+                      <td className="p-3 font-mono font-semibold text-foreground">{stream.id}</td>
+                      <td className="p-3 font-medium text-foreground">{stream.source}</td>
+                      <td className="p-3 text-muted-foreground">{stream.metric}</td>
                       <td className="p-3 text-right font-mono font-bold">
                         <span
-                          className={`px-2 py-0.5 rounded-md ${
+                          className={`px-2 py-0.5 border ${
                             stream.status === "critical"
-                              ? "bg-rose-50 text-rose-600"
+                              ? "bg-destructive/10 text-destructive border-destructive/20"
                               : stream.status === "warning"
-                                ? "bg-amber-50 text-amber-600"
-                                : "bg-emerald-50 text-emerald-600"
+                                ? "bg-warning/10 text-warning border-warning/20"
+                                : "bg-success/10 text-success border-success/20"
                           }`}
                         >
                           {stream.deviation > 0 ? `+${stream.deviation}` : stream.deviation} σ
@@ -223,7 +217,7 @@ export function CorrelatedView() {
               </tbody>
             </table>
             {isSyncing && (
-              <div className="p-8 text-center text-xs text-slate-400 animate-pulse">
+              <div className="p-8 text-center text-xs text-muted-foreground animate-pulse">
                 Synchronizing sensor logs from interplanetary nodes...
               </div>
             )}
@@ -232,58 +226,51 @@ export function CorrelatedView() {
 
         <div className="space-y-6">
           {!isSyncing && hasLoadedOnce && streams.length > 0 ? (
-            <div className="p-6 bg-[#0f172a] text-slate-100 rounded-2xl shadow-md border border-slate-800 space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <span className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
-                  <BrainCircuit className="h-4 w-4 text-sky-400" /> AI Diagnostic Assistant
+            <div className="p-6 bg-card text-foreground border border-border shadow-sm space-y-4">
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <span className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
+                  <BrainCircuit className="h-4 w-4 text-primary" /> AI Diagnostic Assistant
                 </span>
                 <span className="flex h-2 w-2 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                 </span>
               </div>
 
-              <div className="space-y-3 text-xs leading-relaxed text-slate-300">
-                <div className="flex items-start gap-2 bg-slate-900/60 p-3 rounded-xl border border-slate-800/50">
-                  <Sparkles className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+              <div className="space-y-3 text-xs leading-relaxed text-muted-foreground">
+                <div className="flex items-start gap-2 bg-muted p-3 border border-border">
+                  <Sparkles className="h-4 w-4 text-warning shrink-0 mt-0.5" />
                   <p>
-                    <strong>Historical Diagnostics:</strong> Active stream peak calculations placed
-                    at{" "}
-                    <span className="text-slate-100 font-semibold">{highestWindPoint} units</span>.
-                    System configuration registers a stable monitoring environment.
+                    <strong>Historical Diagnostics:</strong> Active stream peak calculations placed at{" "}
+                    <span className="text-foreground font-semibold">{highestWindPoint} units</span>. System configuration registers a stable monitoring environment.
                   </p>
                 </div>
 
-                <div className="flex items-start gap-2 bg-slate-900/40 p-3 rounded-xl border border-slate-800/40">
-                  <LineChart className="h-4 w-4 text-sky-400 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-2 bg-muted p-3 border border-border">
+                  <LineChart className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <p>
-                    <strong>Predictive Trend Outlook:</strong> Extrapolating current regression
-                    curves, parameters are projected to converge near{" "}
-                    <span className="text-sky-400 font-semibold">{predictedWindOutlook} units</span>{" "}
-                    over the next 30 minutes, representing a clear{" "}
-                    <span className="font-semibold text-slate-200">
+                    <strong>Predictive Trend Outlook:</strong> Extrapolating current regression curves, parameters are projected to converge near{" "}
+                    <span className="text-primary font-semibold">{predictedWindOutlook} units</span> over the next 30 minutes, representing a clear{" "}
+                    <span className="font-semibold text-foreground">
                       {isEscalating ? "climbing trajectory" : "downward decay velocity"}
-                    </span>
-                    .
+                    </span>.
                   </p>
                 </div>
 
-                <div className="flex items-start gap-2 bg-slate-900/60 p-3 rounded-xl border border-slate-800/50">
-                  <ShieldAlert className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-2 bg-muted p-3 border border-border">
+                  <ShieldAlert className="h-4 w-4 text-success shrink-0 mt-0.5" />
                   <p>
-                    <strong>Anomaly Threat Matrix:</strong> Predictive calculations estimate cascade
-                    probabilities will remain safely bounded at{" "}
-                    <span className="text-emerald-400 font-semibold">
+                    <strong>Anomaly Threat Matrix:</strong> Predictive calculations estimate cascade probabilities will remain safely bounded at{" "}
+                    <span className="text-success font-semibold">
                       {metrics.cascadeProbability}%
-                    </span>
-                    . No corrective measures are required.
+                    </span>. No corrective measures are required.
                   </p>
                 </div>
               </div>
 
               <div className="pt-1">
-                <div className="p-3 bg-sky-500/10 rounded-xl border border-sky-500/20 text-[11px] text-sky-300 flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+                <div className="p-3 bg-muted border border-border text-[11px] text-muted-foreground flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                   <span>
                     <strong>Live Status:</strong> {metrics.systemFlag}
                   </span>
@@ -291,50 +278,50 @@ export function CorrelatedView() {
               </div>
             </div>
           ) : (
-            <div className="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm text-center space-y-3 py-12">
-              <BrainCircuit className="h-6 w-6 text-slate-400 mx-auto animate-pulse" />
-              <p className="text-xs font-semibold text-slate-700">Awaiting sync completion...</p>
-              <p className="text-[11px] text-slate-400 max-w-[200px] mx-auto">
+            <div className="p-6 bg-card border border-border shadow-sm text-center space-y-3 py-12">
+              <BrainCircuit className="h-6 w-6 text-muted-foreground mx-auto animate-pulse" />
+              <p className="text-xs font-semibold text-foreground">Awaiting sync completion...</p>
+              <p className="text-[11px] text-muted-foreground max-w-[200px] mx-auto">
                 AI synthesis models generate automatically upon data timeline compilation.
               </p>
             </div>
           )}
 
-          <div className="p-6 bg-white rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
-            <span className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-              <BarChart2 className="h-4 w-4 text-slate-500" /> Probability Vector Bounds
+          <div className="p-6 bg-card border border-border shadow-sm space-y-4">
+            <span className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
+              <BarChart2 className="h-4 w-4 text-muted-foreground" /> Probability Vector Bounds
             </span>
 
             <div className="space-y-3">
-              <div className="p-4 bg-slate-50 rounded-xl space-y-1">
+              <div className="p-4 bg-muted space-y-1">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500 flex items-center gap-1.5">
-                    <Zap className="h-3.5 w-3.5 text-amber-500" /> Correlative Index
+                  <span className="text-muted-foreground flex items-center gap-1.5">
+                    <Zap className="h-3.5 w-3.5 text-warning" /> Correlative Index
                   </span>
-                  <span className="font-mono font-bold text-slate-900">
+                  <span className="font-mono font-bold text-foreground">
                     {isSyncing ? "..." : metrics.correlativeIndex}
                   </span>
                 </div>
-                <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden mt-2">
+                <div className="h-1.5 bg-background overflow-hidden mt-2">
                   <div
-                    className="h-full bg-amber-500 transition-all duration-500"
+                    className="h-full bg-warning transition-all duration-500"
                     style={{ width: isSyncing ? "0%" : `${metrics.correlativeIndex * 100}%` }}
                   />
                 </div>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-xl space-y-1">
+              <div className="p-4 bg-muted space-y-1">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500 flex items-center gap-1.5">
-                    <ShieldAlert className="h-3.5 w-3.5 text-rose-500" /> Cascade Probability
+                  <span className="text-muted-foreground flex items-center gap-1.5">
+                    <ShieldAlert className="h-3.5 w-3.5 text-destructive" /> Cascade Probability
                   </span>
-                  <span className="font-mono font-bold text-slate-900">
+                  <span className="font-mono font-bold text-foreground">
                     {isSyncing ? "..." : `${metrics.cascadeProbability}%`}
                   </span>
                 </div>
-                <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden mt-2">
+                <div className="h-1.5 bg-background overflow-hidden mt-2">
                   <div
-                    className="h-full bg-rose-500 transition-all duration-500"
+                    className="h-full bg-destructive transition-all duration-500"
                     style={{ width: isSyncing ? "0%" : `${metrics.cascadeProbability}%` }}
                   />
                 </div>
